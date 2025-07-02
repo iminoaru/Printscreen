@@ -8,6 +8,7 @@ import { UploadDropzone } from '@/components/controls/UploadDropzone'
 import { DimensionControls } from '@/components/controls/DimensionControls'
 import { PatternControls } from '@/components/controls/PatternControls'
 import { FrameControls } from '@/components/controls/FrameControls'
+import { NoiseControls } from '@/components/controls/NoiseControls'
 
 export default function EditorPage() {
   return (
@@ -22,13 +23,14 @@ export default function EditorPage() {
             <FrameControls />
             <BackgroundControls />
             <PatternControls />
+            <NoiseControls />
             <ShadowControls />
             <RoundnessControls />
           </div>
         </div>
 
         {/* Canvas Area */}
-        <div className="flex-1 p-8 flex items-center justify-center">
+        <div className="flex-1 p-8 max-w-[1000px] flex items-center justify-center">
           <EditorCanvas />
         </div>
       </div>

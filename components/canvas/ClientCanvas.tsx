@@ -11,7 +11,9 @@ import { generatePattern } from '@/lib/patterns'
 function CanvasRenderer({ image }: { image: HTMLImageElement }) {
   const stageRef = useRef<any>(null)
   const patternRectRef = useRef<any>(null)
+  const noiseRectRef = useRef<any>(null)
   const [patternImage, setPatternImage] = useState<HTMLCanvasElement | null>(null)
+  const [noiseImage, setNoiseImage] = useState<HTMLImageElement | null>(null)
 
   const {
     screenshot,
@@ -20,6 +22,7 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
     pattern: patternStyle,
     frame,
     canvas,
+    noise,
   } = useEditorStore()
 
   useEffect(() => {
@@ -45,6 +48,19 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
     patternStyle.rotation,
     patternStyle.blur,
   ])
+
+  useEffect(() => {
+    if (!noise.enabled || noise.type === 'none') {
+      setNoiseImage(null)
+      return
+    }
+    
+    const img = new window.Image()
+    img.crossOrigin = 'anonymous'
+    img.onload = () => setNoiseImage(img)
+    img.onerror = () => setNoiseImage(null)
+    img.src = `/${noise.type}.jpg`
+  }, [noise.enabled, noise.type])
 
   /* ─────────────────── layout helpers ─────────────────── */
   const MAX_STAGE = 1000
@@ -181,7 +197,7 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
   /* ─────────────────── render ─────────────────── */
   return (
     <div className='flex flex-col items-center space-y-4'>
-      <div className='bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4'>
+      {/* <div className='bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4'> */}
         <Stage
           width={canvasW}
           height={canvasH}
@@ -209,6 +225,19 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
                 fillPatternImage={patternImage as any}
                 fillPatternRepeat='repeat'
                 opacity={patternStyle.opacity}
+                perfectDrawEnabled={false}
+              />
+            )}
+          </Layer>
+          <Layer>
+            {noiseImage && (
+              <Rect
+                ref={noiseRectRef}
+                width={canvasW}
+                height={canvasH}
+                fillPatternImage={noiseImage as any}
+                fillPatternRepeat='repeat'
+                opacity={noise.opacity}
                 perfectDrawEnabled={false}
               />
             )}
@@ -441,7 +470,7 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
             </Group>
           </Layer>
         </Stage>
-      </div>
+      {/* </div> */}
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>

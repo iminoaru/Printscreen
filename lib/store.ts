@@ -68,6 +68,12 @@ export interface CanvasSettings {
   exportQuality: number
 }
 
+export interface NoiseStyle {
+  enabled: boolean
+  type: 'none' | 'noise' | 'paper'
+  opacity: number
+}
+
 export interface EditorState {
   screenshot: ScreenshotStyle
   shadow: ShadowStyle
@@ -75,6 +81,7 @@ export interface EditorState {
   pattern: PatternStyle
   frame: FrameStyle
   canvas: CanvasSettings
+  noise: NoiseStyle
 
   // Actions
   setScreenshot: (screenshot: Partial<ScreenshotStyle>) => void
@@ -83,6 +90,7 @@ export interface EditorState {
   setPattern: (pattern: Partial<PatternStyle>) => void
   setFrame: (frame: Partial<FrameStyle>) => void
   setCanvas: (canvas: Partial<CanvasSettings>) => void
+  setNoise: (noise: Partial<NoiseStyle>) => void
   set: (fn: (state: EditorState) => EditorState) => void
 }
 
@@ -136,6 +144,11 @@ export const useEditorStore = create<EditorState>((set) => ({
     exportFormat: 'png',
     exportQuality: 0.9,
   },
+  noise: {
+    enabled: false,
+    type: 'none',
+    opacity: 0.1,
+  },
 
   setScreenshot: (screenshot) =>
     set((state) => ({
@@ -161,5 +174,33 @@ export const useEditorStore = create<EditorState>((set) => ({
     set((state) => ({
       canvas: { ...state.canvas, ...canvas },
     })),
+  setNoise: (noise) =>
+    set((state) => ({
+      noise: { ...state.noise, ...noise },
+    })),
   set: (fn) => set(fn),
-})) 
+}))
+
+export const SOLID_PRESETS = [
+  '#f3e8ff', // Soft Lavender
+  '#bfdbfe', // Light Blue
+  '#d1fae5', // Soft Mint
+  '#fed7aa', // Peach Orange
+  '#fce7f3', // Blush Pink
+  '#a7f3d0', // Emerald Green
+  '#fbbf24', // Bright Yellow
+  '#c7d2fe', // Periwinkle Blue
+  '#fb7185', // Coral Pink
+]
+
+export const GRADIENT_PRESETS = [
+  { colorA: '#1a202c', colorB: '#2d3748', direction: 45 },  // Midnight Slate
+  { colorA: '#553c9a', colorB: '#9f7aea', direction: 135 }, // Deep Purple
+  { colorA: '#0f4c75', colorB: '#3282b8', direction: 90 },  // Deep Ocean
+  { colorA: '#2d5016', colorB: '#68d391', direction: 180 }, // Forest to Mint
+  { colorA: '#7c2d12', colorB: '#fed7aa', direction: 225 }, // Copper Sunset
+  { colorA: '#4a1d96', colorB: '#a78bfa', direction: 270 }, // Cosmic Purple
+  { colorA: '#1e3a8a', colorB: '#60a5fa', direction: 315 }, // Navy to Sky
+  { colorA: '#166534', colorB: '#86efac', direction: 0 },   // Emerald Fade
+  { colorA: '#991b1b', colorB: '#fca5a5', direction: 60 },  // Cherry Blossom
+] 

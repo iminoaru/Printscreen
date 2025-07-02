@@ -143,12 +143,12 @@ export function PatternControls() {
               Blur ({(pattern.blur ?? 0).toFixed(1)}px)
             </label>
             {(() => {
-              const sliderValue = (pattern.blur ?? 0) * 5 // 0-20px -> 0-100 UI
+              const sliderValue = (pattern.blur ?? 0) * 5
               return (
                 <Slider
                   value={[sliderValue]}
                   onValueChange={([val]) => {
-                    const newBlur = val / 5 // map back to px
+                    const newBlur = val / 5
                     setPattern({ blur: newBlur })
                   }}
                   min={0}
