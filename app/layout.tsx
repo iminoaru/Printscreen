@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Figtree } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next"
 
 const figtree = Figtree({
   subsets: ["latin"],
@@ -45,6 +46,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <Analytics />
       <body className={`${figtree.variable} font-sans antialiased light`} suppressHydrationWarning>{children}</body>
     </html>
   );
