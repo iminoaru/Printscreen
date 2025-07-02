@@ -1,21 +1,18 @@
 'use client'
 
 import { useEditorStore } from '@/lib/store'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Slider } from '@/components/ui/slider'
 
 export function RoundnessControls() {
   const { screenshot, setScreenshot } = useEditorStore()
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-sm font-medium">Roundness & Position</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
+    <div className="space-y-4">
+      <div className="text-sm font-medium text-muted-foreground">Roundness & Position</div>
+      <div className="space-y-4 pt-4 border-t border-[var(--sidebar-border)]">
         <div>
-          <label className="text-xs text-gray-600 dark:text-gray-400 mb-2 block">
-            Corner Radius ({screenshot.radius}px)
+          <label className="text-xs text-muted-foreground mb-2 block">
+            Corner Radius
           </label>
           <Slider
             value={[screenshot.radius]}
@@ -28,8 +25,8 @@ export function RoundnessControls() {
         </div>
 
         <div>
-          <label className="text-xs text-gray-600 dark:text-gray-400 mb-2 block">
-            Horizontal Offset ({screenshot.offsetX}px)
+          <label className="text-xs text-muted-foreground mb-2 block">
+            Horizontal Offset
           </label>
           <Slider
             value={[screenshot.offsetX]}
@@ -42,8 +39,8 @@ export function RoundnessControls() {
         </div>
 
         <div>
-          <label className="text-xs text-gray-600 dark:text-gray-400 mb-2 block">
-            Vertical Offset ({screenshot.offsetY}px)
+          <label className="text-xs text-muted-foreground mb-2 block">
+            Vertical Offset
           </label>
           <Slider
             value={[screenshot.offsetY]}
@@ -56,8 +53,8 @@ export function RoundnessControls() {
         </div>
 
         <div>
-          <label className="text-xs text-gray-600 dark:text-gray-400 mb-2 block">
-            Scale ({(screenshot.scale * 100).toFixed(0)}%)
+          <label className="text-xs text-muted-foreground mb-2 block">
+            Scale
           </label>
           <Slider
             value={[screenshot.scale]}
@@ -68,7 +65,7 @@ export function RoundnessControls() {
             className="w-full"
           />
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 } 
