@@ -49,6 +49,18 @@ export interface PatternStyle {
   blur: number
 }
 
+export interface FrameStyle {
+  enabled: boolean
+  type: 'none' | 'solid' | 'window' | 'glassy' | 'infinite-mirror' | 'ruler' | 'eclipse'
+  // Solid
+  color: string
+  width: number
+  // Window
+  padding: number
+  title: string
+  theme: 'light' | 'dark'
+}
+
 export interface CanvasSettings {
   aspectRatio: AspectRatio
   padding: number
@@ -63,13 +75,15 @@ export interface EditorState {
   shadow: ShadowStyle
   background: BackgroundStyle
   pattern: PatternStyle
+  frame: FrameStyle
   canvas: CanvasSettings
-  
+
   // Actions
   setScreenshot: (screenshot: Partial<ScreenshotStyle>) => void
   setShadow: (shadow: Partial<ShadowStyle>) => void
   setBackground: (background: Partial<BackgroundStyle>) => void
   setPattern: (pattern: Partial<PatternStyle>) => void
+  setFrame: (frame: Partial<FrameStyle>) => void
   setCanvas: (canvas: Partial<CanvasSettings>) => void
   set: (fn: (state: EditorState) => EditorState) => void
 }
@@ -109,15 +123,24 @@ export const useEditorStore = create<EditorState>()(
         color: '#000000',
         blur: 0,
       },
+      frame: {
+        enabled: true,
+        type: 'solid',
+        color: '#000000',
+        width: 2,
+        padding: 24,
+        title: 'screenshot.png',
+        theme: 'dark',
+      },
       canvas: {
         aspectRatio: 'square',
         padding: 40,
         frameColor: '#ffffff',
-        exportMultiplier: 8,
+        exportMultiplier: 2,
         exportFormat: 'png',
         exportQuality: 0.9,
       },
-      
+
       setScreenshot: (screenshot) =>
         set((state) => ({
           screenshot: { ...state.screenshot, ...screenshot },
@@ -134,6 +157,10 @@ export const useEditorStore = create<EditorState>()(
         set((state) => ({
           pattern: { ...state.pattern, ...pattern },
         })),
+      setFrame: (frame) =>
+        set((state) => ({
+          frame: { ...state.frame, ...frame },
+        })),
       setCanvas: (canvas) =>
         set((state) => ({
           canvas: { ...state.canvas, ...canvas },
@@ -147,6 +174,7 @@ export const useEditorStore = create<EditorState>()(
         canvas: state.canvas,
         pattern: state.pattern,
         shadow: state.shadow,
+        frame: state.frame,
       }),
     }
   )

@@ -7,6 +7,7 @@ import { RoundnessControls } from '@/components/controls/RoundnessControls'
 import { UploadDropzone } from '@/components/controls/UploadDropzone'
 import { DimensionControls } from '@/components/controls/DimensionControls'
 import { PatternControls } from '@/components/controls/PatternControls'
+import { FrameControls } from '@/components/controls/FrameControls'
 
 export default function EditorPage() {
   return (
@@ -18,6 +19,7 @@ export default function EditorPage() {
           <div className="p-6 space-y-4 overflow-y-auto flex-1">
             <UploadDropzone />
             <DimensionControls />
+            <FrameControls />
             <BackgroundControls />
             <PatternControls />
             <ShadowControls />

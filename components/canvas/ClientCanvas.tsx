@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { Stage, Layer, Rect, Image as KonvaImage } from 'react-konva'
+import { Stage, Layer, Rect, Image as KonvaImage, Group, Circle, Text } from 'react-konva'
 import Konva from 'konva'
 import { useEditorStore } from '@/lib/store'
 import { Button } from '@/components/ui/button'
@@ -19,6 +19,7 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
     background,
     shadow,
     pattern: patternStyle,
+    frame,
     canvas,
   } = useEditorStore()
 
@@ -93,6 +94,21 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
     imageScaledH = imageScaledW / imageAspect
   }
 
+  /* ─────────────────── frame helpers ─────────────────── */
+  const showFrame = frame.enabled && frame.type !== 'none'
+  const frameOffset =
+    showFrame && (frame.type === 'solid' || frame.type === 'glassy')
+      ? frame.width
+      : showFrame && frame.type === 'ruler'
+      ? frame.width + 2
+      : 0
+  const windowPadding = showFrame && frame.type === 'window' ? frame.padding : 0
+  const windowHeader = showFrame && frame.type === 'window' ? 30 : 0
+  const eclipseBorder = showFrame && frame.type === 'eclipse' ? frame.width + 2 : 0
+
+  const framedW = imageScaledW + frameOffset * 2 + windowPadding * 2 + eclipseBorder
+  const framedH = imageScaledH + frameOffset * 2 + windowPadding * 2 + windowHeader + eclipseBorder
+
   /* ─────────────────── background + shadow helpers ─────────────────── */
   const gradientProps =
     background.mode === 'gradient'
@@ -141,7 +157,7 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
   /* ─────────────────── HQ export (dynamic pixelRatio) ─────────────────── */
   const handleExport = (format: 'png' | 'jpeg') => {
     if (!stageRef.current || !image) return
-    const shrinkFactor = image.naturalWidth / imageScaledW
+    const shrinkFactor = image.naturalWidth / framedW
     const desiredPR = canvas.exportMultiplier * shrinkFactor
     const MAX_EDGE = 8192
     const cappedPR = Math.min(desiredPR, MAX_EDGE / canvasW)
@@ -199,19 +215,175 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
             )}
           </Layer>
           <Layer>
-            <KonvaImage
-              image={image}
+            <Group
               x={canvasW / 2 + screenshot.offsetX}
               y={canvasH / 2 + screenshot.offsetY}
-              width={imageScaledW}
-              height={imageScaledH}
-              offsetX={imageScaledW / 2}
-              offsetY={imageScaledH / 2}
-              cornerRadius={screenshot.radius}
+              width={framedW}
+              height={framedH}
+              offsetX={framedW / 2}
+              offsetY={framedH / 2}
               rotation={screenshot.rotation}
-              imageSmoothingEnabled={false} // crisp preview
               {...shadowProps}
-            />
+            >
+              {/* Solid Frame */}
+              {showFrame && frame.type === 'solid' && (
+                <Rect
+                  width={framedW}
+                  height={framedH}
+                  fill={frame.color}
+                  cornerRadius={screenshot.radius}
+                />
+              )}
+
+              {/* Glassy Frame */}
+              {showFrame && frame.type === 'glassy' && (
+                <Rect
+                  width={framedW}
+                  height={framedH}
+                  fill="rgba(255, 255, 255, 0.1)"
+                  stroke="rgba(255, 255, 255, 0.2)" 
+                  strokeWidth={frame.width + 6 }
+                  cornerRadius={screenshot.radius + 6}
+                />
+              )}
+
+              {/* Ruler Frame */}
+              {showFrame && frame.type === 'ruler' && (
+                <Group>
+                  {/* Pure white plastic ruler background */}
+                  <Rect 
+                    width={framedW} 
+                    height={framedH}
+                    cornerRadius={screenshot.radius} 
+                  />
+                  
+                  {/* Subtle inner highlight for plastic feel */}
+                  <Rect 
+                    width={framedW - 1} 
+                    height={framedH - 1} 
+                    x={1} 
+                    y={1}
+                    stroke="rgba(255, 255, 255, 0.9)" 
+                    strokeWidth={1}
+                    cornerRadius={Math.max(0, screenshot.radius - 2)} 
+                  />
+                  
+                  {/* Ruler marks with proper corner clipping */}
+                  <Group>
+                    <Rect width={framedW} height={framedH} fill="rgba(255, 255, 255, 0.5)" cornerRadius={screenshot.radius} />
+                    <Group globalCompositeOperation="source-atop">
+                      {/* Top ruler marks */}
+                      {Array.from({ length: Math.floor(framedW / 10) -1 }).map((_, i) => (
+                        <Rect key={`t-${i}`} x={(i) * 10} y={1} width={2} height={(i+1) % 5 === 0 ? 10 : 5} fill="rgba(0, 0, 0, 0.8)" />
+                      ))}
+                      {/* Left ruler marks */}
+                      {Array.from({ length: Math.floor(framedH / 10) -1 }).map((_, i) => (
+                        <Rect key={`l-${i}`} x={1} y={(i) * 10} width={(i+1) % 5 === 0 ? 10 : 5} height={2} fill="rgba(0, 0, 0, 0.8)" />
+                      ))}
+                      {/* Right ruler marks */}
+                      {Array.from({ length: Math.floor(framedH / 10) -1 }).map((_, i) => (
+                        <Rect key={`r-${i}`} x={framedW - 1} y={(i) * 10} width={(i+1) % 5 === 0 ? -10 : -5} height={2} fill="rgba(0, 0, 0, 0.8)" />
+                      ))}
+                      {/* Bottom ruler marks */}
+                      {Array.from({ length: Math.floor(framedW / 10) -1 }).map((_, i) => (
+                        <Rect key={`b-${i}`} x={(i) * 10} y={framedH - 1} width={2} height={(i+1) % 5 === 0 ? -10 : -5} fill="rgba(0, 0, 0, 0.8)" />
+                      ))}
+                    </Group>
+                  </Group>
+                  
+                  {/* Outer edge for definition */}
+                  <Rect 
+                    width={framedW} 
+                    height={framedH} 
+                    stroke="rgba(0, 0, 0, 0.15)" 
+                    strokeWidth={1} 
+                    cornerRadius={screenshot.radius} 
+                  />
+                </Group>
+              )}
+
+              {/* Infinite Mirror Frame */}
+              {showFrame && frame.type === 'infinite-mirror' && (
+                <>
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <Rect
+                      key={i}
+                      width={framedW + i * 15}
+                      height={framedH + i * 15}
+                      x={-i * 7.5}
+                      y={-i * 7.5}
+                      stroke={frame.color}
+                      strokeWidth={4}
+                      cornerRadius={screenshot.radius + i * 5}
+                      opacity={0.3 - i * 0.07}
+                    />
+                  ))}
+                </>
+              )}
+
+              {/* Eclipse Frame */}
+              {showFrame && frame.type === 'eclipse' && (
+                <Group>
+                  <Rect
+                    width={framedW}
+                    height={framedH}
+                    fill={frame.color}
+                    cornerRadius={screenshot.radius + eclipseBorder}
+                  />
+                  <Rect
+                    globalCompositeOperation="destination-out"
+                    x={-eclipseBorder*4}
+                    y={-eclipseBorder*4}
+                    width={imageScaledW + eclipseBorder}
+                    height={imageScaledH + eclipseBorder}
+                    fill="black"
+                    cornerRadius={screenshot.radius}
+                  />
+                </Group>
+              )}
+
+              {/* Window Frame */}
+              {showFrame && frame.type === 'window' && (
+                <>
+                  <Rect // main window
+                    width={framedW}
+                    height={framedH}
+                    fill={frame.theme === 'dark' ? '#2f2f2f' : '#fefefe'}
+                    cornerRadius={screenshot.radius}
+                  />
+                  <Rect // header
+                    width={framedW}
+                    height={windowHeader}
+                    fill={frame.theme === 'dark' ? '#4a4a4a' : '#e2e2e2'}
+                    cornerRadius={[screenshot.radius, screenshot.radius, 0, 0]}
+                  />
+                  <Circle x={15} y={15} radius={5} fill="#ff5f57" />
+                  <Circle x={35} y={15} radius={5} fill="#febc2e" />
+                  <Circle x={55} y={15} radius={5} fill="#28c840" />
+                  <Text
+                    text={frame.title}
+                    x={0}
+                    y={0}
+                    width={framedW}
+                    height={windowHeader}
+                    align="center"
+                    verticalAlign="middle"
+                    fill={frame.theme === 'dark' ? '#f0f0f0' : '#4f4f4f'}
+                    fontSize={12}
+                  />
+                </>
+              )}
+
+              <KonvaImage
+                image={image}
+                x={frameOffset + windowPadding}
+                y={frameOffset + windowPadding + windowHeader}
+                width={imageScaledW}
+                height={imageScaledH}
+                cornerRadius={screenshot.radius}
+                imageSmoothingEnabled={false}
+              />
+            </Group>
           </Layer>
         </Stage>
       </div>
