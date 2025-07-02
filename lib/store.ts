@@ -49,7 +49,7 @@ export interface PatternStyle {
 
 export interface FrameStyle {
   enabled: boolean
-  type: 'none' | 'solid' | 'window' | 'glassy' | 'infinite-mirror' | 'ruler' | 'eclipse'
+  type: 'none' | 'solid' | 'window' | 'glassy' | 'infinite-mirror' | 'ruler' | 'eclipse' | 'stack' | 'dotted'
   // Solid
   color: string
   width: number

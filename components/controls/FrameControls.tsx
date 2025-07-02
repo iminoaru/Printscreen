@@ -38,10 +38,12 @@ export function FrameControls() {
               <SelectItem value="infinite-mirror">Infinite Mirror</SelectItem>
               <SelectItem value="ruler">Ruler</SelectItem>
               <SelectItem value="eclipse">Eclipse</SelectItem>
+              <SelectItem value="stack">Stack</SelectItem>
+              <SelectItem value="dotted">Dotted</SelectItem>
             </SelectContent>
           </Select>
 
-          {frame.type === 'solid' && (
+          {['solid', 'dotted'].includes(frame.type) && (
             <>
               <div>
                 <label className="text-xs text-gray-600 dark:text-gray-400 mb-2 block">Color</label>
@@ -68,14 +70,14 @@ export function FrameControls() {
                   value={[frame.width]}
                   onValueChange={([value]) => setFrame({ width: value })}
                   min={1}
-                  max={50}
+                  max={20}
                   step={1}
                 />
               </div>
             </>
           )}
 
-          {frame.type === 'window' && (
+          {(frame.type === 'window' || frame.type === 'stack') && (
             <>
               <Select value={frame.theme} onValueChange={(v) => setFrame({ theme: v as any })}>
                 <SelectTrigger>
@@ -86,27 +88,31 @@ export function FrameControls() {
                   <SelectItem value="dark">Dark</SelectItem>
                 </SelectContent>
               </Select>
-              <div>
-                <label className="text-xs text-gray-600 dark:text-gray-400 mb-2 block">Title</label>
-                <input
-                  type="text"
-                  value={frame.title}
-                  onChange={(e) => setFrame({ title: e.target.value })}
-                  className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
-                />
-              </div>
-              <div>
-                <label className="text-xs text-gray-600 dark:text-gray-400 mb-2 block">
-                  Padding ({frame.padding}px)
-                </label>
-                <Slider
-                  value={[frame.padding]}
-                  onValueChange={([value]) => setFrame({ padding: value })}
-                  min={0}
-                  max={100}
-                  step={1}
-                />
-              </div>
+              {frame.type === 'window' && (
+                <>
+                  <div>
+                    <label className="text-xs text-gray-600 dark:text-gray-400 mb-2 block">Title</label>
+                    <input
+                      type="text"
+                      value={frame.title}
+                      onChange={(e) => setFrame({ title: e.target.value })}
+                      className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-gray-600 dark:text-gray-400 mb-2 block">
+                      Padding ({frame.padding}px)
+                    </label>
+                    <Slider
+                      value={[frame.padding]}
+                      onValueChange={([value]) => setFrame({ padding: value })}
+                      min={0}
+                      max={100}
+                      step={1}
+                    />
+                  </div>
+                </>
+              )}
             </>
           )}
         </CardContent>

@@ -348,6 +348,41 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
               )}
               
 
+              {/* Stack Frame */}
+              {showFrame && frame.type === 'stack' && (
+                <>
+                  {/* Bottom layer - darkest */}
+                  <Rect
+                    width={framedW / 1.2}
+                    height={framedH / 5}
+                    x={(framedW - framedW / 1.2) / 2}
+                    y={-40}
+                    fill={frame.theme === 'dark' ? '#444444' : '#f5f5f5' }
+                    cornerRadius={screenshot.radius}
+                    opacity={1}
+                    {...shadowProps}
+                  />
+                  {/* Middle layer */}
+                  <Rect
+                    width={framedW / 1.1}
+                    height={framedH / 5}
+                    x={(framedW - framedW / 1.1) / 2}
+                    y={-20}
+                    fill={frame.theme === 'dark' ? '#2a2a2a' : '#f0f0f0'}
+                    cornerRadius={screenshot.radius}
+                    opacity={1}
+                  />
+                  {/* Top layer - lightest, will have image on top */}
+                  <Rect
+                    width={framedW}
+                    height={framedH}
+                    fill={frame.theme === 'dark' ? '#555555' : '#e8e8e8'}
+                    cornerRadius={screenshot.radius}
+                    {...shadowProps}
+                  />
+                </>
+              )}
+
               {/* Window Frame */}
               {showFrame && frame.type === 'window' && (
                 <>
@@ -379,6 +414,19 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
                     fontSize={16}
                   />
                 </>
+              )}
+
+              {/* Dotted Frame */}
+              {showFrame && frame.type === 'dotted' && (
+                <Rect
+                  width={framedW}
+                  height={framedH}
+                  stroke={frame.color}
+                  strokeWidth={frame.width}
+                  dash={[frame.width * 2, frame.width * 1.2]}
+                  cornerRadius={screenshot.radius}
+                  {...shadowProps}
+                />
               )}
 
               <KonvaImage
