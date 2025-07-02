@@ -78,10 +78,10 @@ export function ShadowControls() {
               Intensity ({Math.round((shadow.intensity ?? 0.5) * 100)}%)
             </label>
             <Slider
-              value={[shadow.intensity ?? 2]}
+              value={[shadow.intensity ?? 0.5]}
               onValueChange={([value]) => setShadow({ intensity: value })}
-              min={1}
-              max={3}
+              min={0}
+              max={1}
               step={0.05}
               className="w-full"
             />

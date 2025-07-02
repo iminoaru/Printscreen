@@ -123,7 +123,7 @@ export const useEditorStore = create<EditorState>((set) => ({
     enabled: true,
     type: 'solid',
     color: '#000000',
-    width: 2,
+    width: 8,
     padding: 24,
     title: 'screenshot.png',
     theme: 'dark',

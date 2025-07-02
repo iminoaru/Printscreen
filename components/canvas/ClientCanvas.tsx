@@ -222,8 +222,9 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
               offsetX={framedW / 2}
               offsetY={framedH / 2}
               rotation={screenshot.rotation}
-              {...shadowProps}
             >
+              {/* The visible elements themselves carry the drop shadow so it is not masked by later draws */}
+
               {/* Solid Frame */}
               {showFrame && frame.type === 'solid' && (
                 <Rect
@@ -231,6 +232,7 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
                   height={framedH}
                   fill={frame.color}
                   cornerRadius={screenshot.radius}
+                  {...shadowProps}
                 />
               )}
 
@@ -239,10 +241,12 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
                 <Rect
                   width={framedW}
                   height={framedH}
-                  fill="rgba(255, 255, 255, 0.1)"
-                  stroke="rgba(255, 255, 255, 0.2)" 
-                  strokeWidth={frame.width + 6 }
+                  fill="rgba(255, 255, 255, 0.15)"
+                  stroke="rgba(255, 255, 255, 0.3)" 
+                  strokeWidth={frame.width * 4 + 6}
                   cornerRadius={screenshot.radius + 6}
+                  shadowForStrokeEnabled
+                  {...shadowProps}
                 />
               )}
 
@@ -252,7 +256,10 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
                   <Rect 
                     width={framedW} 
                     height={framedH}
-                    cornerRadius={screenshot.radius} 
+                    cornerRadius={screenshot.radius}
+                    fill="rgba(0,0,0,0.3)"
+                    shadowForStrokeEnabled
+                    {...shadowProps}
                   />
                   
                   <Rect 
@@ -266,7 +273,7 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
                   />
                   
                   <Group>
-                    <Rect width={framedW} height={framedH} fill="rgba(255, 255, 255, 0.5)" cornerRadius={screenshot.radius} />
+                    <Rect width={framedW} height={framedH} fill="rgba(255, 255, 255, 0.2)" cornerRadius={screenshot.radius} />
                     <Group globalCompositeOperation="source-atop">
                       {/* Top ruler marks */}
                       {Array.from({ length: Math.floor(framedW / 10) -1 }).map((_, i) => (
@@ -312,6 +319,7 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
                       strokeWidth={4}
                       cornerRadius={screenshot.radius + i * 5}
                       opacity={0.3 - i * 0.07}
+                      {...(i === 0 ? { ...shadowProps, shadowForStrokeEnabled: true } : {})}
                     />
                   ))}
                 </>
@@ -325,13 +333,14 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
                     height={framedH}
                     fill={frame.color}
                     cornerRadius={screenshot.radius + eclipseBorder}
+                    {...shadowProps}
                   />
                   <Rect
                     globalCompositeOperation="destination-out"
-                    x={-eclipseBorder*4}
-                    y={-eclipseBorder*4}
-                    width={imageScaledW + eclipseBorder}
-                    height={imageScaledH + eclipseBorder}
+                    x={eclipseBorder}
+                    y={eclipseBorder}
+                    width={framedW - eclipseBorder * 2}
+                    height={framedH - eclipseBorder * 2}
                     fill="black"
                     cornerRadius={screenshot.radius}
                   />
@@ -347,6 +356,7 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
                     height={framedH}
                     fill={frame.theme === 'dark' ? '#2f2f2f' : '#fefefe'}
                     cornerRadius={screenshot.radius}
+                    {...shadowProps}
                   />
                   <Rect // header
                     width={framedW}
@@ -379,6 +389,7 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
                 height={imageScaledH}
                 cornerRadius={showFrame && frame.type === 'window' ? [0, 0, screenshot.radius, screenshot.radius] : screenshot.radius}
                 imageSmoothingEnabled={false}
+                {...(!showFrame || frame.type === 'none' ? shadowProps : {})}
               />
             </Group>
           </Layer>
