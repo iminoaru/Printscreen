@@ -509,8 +509,8 @@ export default function ClientCanvas() {
 
   if (!image) {
     return (
-      <div className='flex-1 flex items-center justify-center min-h-[400px]'>
-        <div className='text-gray-500'>Awaiting image…</div>
+      <div className="flex-1 flex items-center justify-center min-h-[400px]">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-600"></div>
       </div>
     )
   }

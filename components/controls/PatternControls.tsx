@@ -1,10 +1,46 @@
 "use client"
 
-import { useMemo } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { useEditorStore } from '@/lib/store'
 import { Slider } from '@/components/ui/slider'
 import { generatePattern, patternTypes, type PatternType } from '@/lib/patterns'
 import { Input } from '@/components/ui/input'
+
+const isValidHex = (color: string) => /^#[0-9A-F]{6}$/i.test(color)
+
+function ColorInput({
+  value,
+  onChange,
+  className = '',
+}: {
+  value: string
+  onChange: (value: string) => void
+  className?: string
+}) {
+  const [localValue, setLocalValue] = useState(value)
+
+  useEffect(() => {
+    setLocalValue(value)
+  }, [value])
+
+  const handleBlur = () => {
+    if (isValidHex(localValue)) {
+      onChange(localValue)
+    } else {
+      setLocalValue(value)
+    }
+  }
+
+  return (
+    <Input
+      type="text"
+      value={localValue}
+      onChange={(e) => setLocalValue(e.target.value)}
+      onBlur={handleBlur}
+      className={className}
+    />
+  )
+}
 
 interface PatternPreviewProps {
   type: PatternType
@@ -78,10 +114,9 @@ export function PatternControls() {
                 className="absolute inset-0 size-full cursor-pointer opacity-0"
               />
             </div>
-            <Input
-              type='text'
+            <ColorInput
               value={pattern.color}
-              onChange={(e) => setPattern({ color: e.target.value })}
+              onChange={(color) => setPattern({ color: color })}
             />
           </div>
         </div>

@@ -8,6 +8,43 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Button } from '@/components/ui/button'
 import { Palette } from 'lucide-react'
 import { Input } from '@/components/ui/input'
+import { useState, useEffect } from 'react'
+
+const isValidHex = (color: string) => /^#[0-9A-F]{6}$/i.test(color)
+
+function ColorInput({
+  value,
+  onChange,
+  className = '',
+}: {
+  value: string
+  onChange: (value: string) => void
+  className?: string
+}) {
+  const [localValue, setLocalValue] = useState(value)
+
+  useEffect(() => {
+    setLocalValue(value)
+  }, [value])
+
+  const handleBlur = () => {
+    if (isValidHex(localValue)) {
+      onChange(localValue)
+    } else {
+      setLocalValue(value)
+    }
+  }
+
+  return (
+    <Input
+      type="text"
+      value={localValue}
+      onChange={(e) => setLocalValue(e.target.value)}
+      onBlur={handleBlur}
+      className={className}
+    />
+  )
+}
 
 export function BackgroundControls() {
   const { background, setBackground } = useEditorStore()
@@ -91,10 +128,9 @@ export function BackgroundControls() {
                 className="absolute inset-0 size-full cursor-pointer opacity-0"
               />
             </div>
-            <Input
-              type="text"
+            <ColorInput
               value={background.colorA}
-              onChange={(e) => setBackground({ colorA: e.target.value })}
+              onChange={(color) => setBackground({ colorA: color })}
             />
           </div>
         </div>
@@ -117,10 +153,9 @@ export function BackgroundControls() {
                     className="absolute inset-0 size-full cursor-pointer opacity-0"
                   />
                 </div>
-                <Input
-                  type="text"
+                <ColorInput
                   value={background.colorA}
-                  onChange={(e) => setBackground({ colorA: e.target.value })}
+                  onChange={(color) => setBackground({ colorA: color })}
                   className="min-w-0"
                 />
               </div>
@@ -139,10 +174,9 @@ export function BackgroundControls() {
                     className="absolute inset-0 size-full cursor-pointer opacity-0"
                   />
                 </div>
-                <Input
-                  type="text"
+                <ColorInput
                   value={background.colorB}
-                  onChange={(e) => setBackground({ colorB: e.target.value })}
+                  onChange={(color) => setBackground({ colorB: color })}
                   className="min-w-0"
                 />
               </div>

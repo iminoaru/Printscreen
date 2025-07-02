@@ -25,7 +25,7 @@ const doExport = (stage: Konva.Stage, options: any) => {
 
   const link = document.createElement('a')
   const extension = format === 'jpeg' ? 'jpg' : 'png'
-  link.download = `prtscn-${Date.now()}.${extension}`
+  link.download = `printscreen.ink-${Date.now()}.${extension}`
   link.href = uri
   document.body.appendChild(link)
   link.click()
@@ -50,9 +50,7 @@ export function ExportControls() {
     }
   }, [canvas])
 
-  if (!screenshot.src) {
-    return null
-  }
+
 
   return (
     <div className="flex items-center justify-between gap-4">
