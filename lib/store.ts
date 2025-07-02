@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import React from 'react'
 
 export type AspectRatio = 'square' | '4:3' | '2:1' | '3:2'
 
@@ -82,6 +83,7 @@ export interface EditorState {
   frame: FrameStyle
   canvas: CanvasSettings
   noise: NoiseStyle
+  canvasRef: React.RefObject<any> | null
 
   // Actions
   setScreenshot: (screenshot: Partial<ScreenshotStyle>) => void
@@ -91,6 +93,7 @@ export interface EditorState {
   setFrame: (frame: Partial<FrameStyle>) => void
   setCanvas: (canvas: Partial<CanvasSettings>) => void
   setNoise: (noise: Partial<NoiseStyle>) => void
+  setCanvasRef: (ref: React.RefObject<any> | null) => void
   set: (fn: (state: EditorState) => EditorState) => void
 }
 
@@ -149,6 +152,7 @@ export const useEditorStore = create<EditorState>((set) => ({
     type: 'none',
     opacity: 0.1,
   },
+  canvasRef: null,
 
   setScreenshot: (screenshot) =>
     set((state) => ({
@@ -177,6 +181,10 @@ export const useEditorStore = create<EditorState>((set) => ({
   setNoise: (noise) =>
     set((state) => ({
       noise: { ...state.noise, ...noise },
+    })),
+  setCanvasRef: (ref) =>
+    set((state) => ({
+      canvasRef: ref,
     })),
   set: (fn) => set(fn),
 }))

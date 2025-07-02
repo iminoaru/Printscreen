@@ -9,6 +9,7 @@ import { DimensionControls } from '@/components/controls/DimensionControls'
 import { PatternControls } from '@/components/controls/PatternControls'
 import { FrameControls } from '@/components/controls/FrameControls'
 import { NoiseControls } from '@/components/controls/NoiseControls'
+import { ExportControls } from '@/components/controls/ExportControls'
 
 export default function EditorPage() {
   return (
@@ -26,10 +27,15 @@ export default function EditorPage() {
           <ShadowControls />
           <RoundnessControls />
         </div>
+        
+        {/* Fixed Export Section */}
+        <div className="p-6 border-t border-gray-200 dark:border-gray-700">
+          <ExportControls />
+        </div>
       </div>
-      <div className="lg:col-span-1"></div>
+      {/* <div className="lg:col-span-1"></div> */}
       {/* Canvas Area */}
-      <div className="lg:col-span-6 flex items-center justify-center p-4 h-screen w-full">
+      <div className="lg:col-span-7 flex items-center justify-center p-4 h-screen w-full">
         <EditorCanvas />
       </div>
     </div>

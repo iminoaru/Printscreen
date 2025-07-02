@@ -3,9 +3,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Stage, Layer, Rect, Image as KonvaImage, Group, Circle, Text } from 'react-konva'
 import { useEditorStore } from '@/lib/store'
-import { Button } from '@/components/ui/button'
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu'
-import { cn } from '@/lib/utils'
 import { generatePattern } from '@/lib/patterns'
 
 function CanvasRenderer({ image }: { image: HTMLImageElement }) {
@@ -23,7 +20,15 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
     frame,
     canvas,
     noise,
+    setCanvasRef,
   } = useEditorStore()
+
+  // Set the canvas ref in the store when it's ready
+  useEffect(() => {
+    if (stageRef.current) {
+      setCanvasRef(stageRef)
+    }
+  }, [setCanvasRef])
 
   useEffect(() => {
     if (!patternStyle.enabled) {
@@ -171,42 +176,20 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
       })()
     : {}
 
-  /* ─────────────────── HQ export (dynamic pixelRatio) ─────────────────── */
-  const handleExport = (format: 'png' | 'jpeg') => {
-    if (!stageRef.current || !image) return
-    const shrinkFactor = image.naturalWidth / framedW
-    const desiredPR = canvas.exportMultiplier * shrinkFactor
-    const MAX_EDGE = 8192
-    const cappedPR = Math.min(desiredPR, MAX_EDGE / canvasW)
-    const mimeType = format === 'jpeg' ? 'image/jpeg' : 'image/png'
-    const uri = stageRef.current.toDataURL({
-      mimeType,
-      quality: format === 'jpeg' ? canvas.exportQuality ?? 0.9 : undefined,
-      pixelRatio: cappedPR,
-      imageSmoothingEnabled: true,
-    })
-    const link = document.createElement('a')
-    const extension = format === 'jpeg' ? 'jpg' : 'png'
-    link.download = `prtscn-${Date.now()}.${extension}`
-    link.href = uri
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-  }
+
 
   /* ─────────────────── render ─────────────────── */
   return (
-    <div className='flex flex-col items-center justify-center w-full h-full space-y-4'>
-      {/* <div className='bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4'> */}
-        <div style={{ width: '100%', aspectRatio: `${canvasW}/${canvasH}` }} className="flex items-center justify-center">
+    <div className='flex items-center justify-center w-full h-full'>
+      <div style={{ width: '75%', aspectRatio: `${canvasW}/${canvasH}` }} className="flex items-center justify-center">
           <Stage
             width={canvasW}
             height={canvasH}
             ref={stageRef}
             className='hires-stage'
             style={{
-              width: '90%',
-              height: '90%',
+              width: '100%',
+              height: '100%',
             }}
           >
             <Layer>
@@ -472,27 +455,6 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
             </Layer>
           </Stage>
         </div>
-      {/* </div> */}
-
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button>Download</Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className={cn('bg-white dark:bg-gray-800 shadow-lg rounded-md p-1 text-sm')}> 
-          <DropdownMenuItem
-            onSelect={() => handleExport('png')}
-            className={cn('cursor-pointer px-3 py-2 rounded-md focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700')}
-          >
-            PNG (lossless)
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onSelect={() => handleExport('jpeg')}
-            className={cn('cursor-pointer px-3 py-2 rounded-md focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700')}
-          >
-            JPEG (smaller)
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
     </div>
   )
 }
