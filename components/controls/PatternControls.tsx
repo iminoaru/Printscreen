@@ -1,66 +1,37 @@
 'use client'
 
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo } from 'react'
 import { useEditorStore } from '@/lib/store'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Slider } from '@/components/ui/slider'
 import { generatePattern, patternTypes, type PatternType } from '@/lib/patterns'
 
-function PatternPreview({ type }: { type: PatternType }) {
-  const pattern = useEditorStore((state) => state.pattern)
-  const background = useEditorStore((state) => state.background)
+interface PatternPreviewProps {
+  type: PatternType
+  selected: boolean
+  onSelect: () => void
+}
 
-  const [patternUrl, setPatternUrl] = useState('')
-
-  const backgroundStyle = useMemo(() => {
-    if (background.mode === 'solid') {
-      return { backgroundColor: background.colorA }
-    }
-    return { backgroundColor: background.colorA }
-  }, [background])
-
-  useEffect(() => {
-    if (!pattern.enabled) {
-      setPatternUrl('')
-      return
-    }
-    const patternCanvas = generatePattern(
-      type,
-      pattern.scale,
-      pattern.spacing,
-      pattern.color,
-      pattern.rotation
-    )
-    setPatternUrl(patternCanvas.toDataURL())
-  }, [
-    type,
-    pattern.enabled,
-    pattern.scale,
-    pattern.spacing,
-    pattern.color,
-    pattern.rotation,
-  ])
-
-  const patternStyle = useMemo(() => {
-    if (!patternUrl) {
-      return { backgroundImage: 'none' }
-    }
-    return {
-      backgroundImage: `url(${patternUrl})`,
-    }
-  }, [patternUrl])
+function PatternPreview({ type, selected, onSelect }: PatternPreviewProps) {
+  // Generate a lightweight preview only once per type
+  const patternUrl = useMemo(() => {
+    const canvas = generatePattern(type, 1, 1, '#000000', 0, 0)
+    return canvas.toDataURL()
+  }, [type])
 
   return (
     <div
+      onClick={onSelect}
       className='w-full h-12 rounded-lg cursor-pointer border-2 border-transparent aria-selected:border-blue-500'
-      aria-selected={pattern.type === type}
-      style={{ ...backgroundStyle, ...patternStyle }}
+      aria-selected={selected}
+      style={{ backgroundColor: '#ffffff', backgroundImage: `url(${patternUrl})` }}
     />
   )
 }
 
 export function PatternControls() {
-  const { pattern, set } = useEditorStore()
+  const pattern = useEditorStore((s) => s.pattern)
+  const set = useEditorStore((s) => s.set)
 
   const setPattern = (newPattern: Partial<typeof pattern>) => {
     set((state) => ({ ...state, pattern: { ...state.pattern, ...newPattern } }))
@@ -91,7 +62,7 @@ export function PatternControls() {
             <div className='grid grid-cols-5 gap-2'>
               {patternTypes.map(({ value }) => (
                 <div key={value} onClick={() => setPattern({ type: value })}>
-                  <PatternPreview type={value} />
+                  <PatternPreview type={value} selected={pattern.type === value} onSelect={() => setPattern({ type: value })} />
                 </div>
               ))}
             </div>
@@ -124,7 +95,7 @@ export function PatternControls() {
               onValueChange={([value]) => setPattern({ opacity: value })}
               min={0}
               max={1}
-              step={0.05}
+              step={0.1}
               className='w-full'
             />
           </div>
@@ -136,7 +107,7 @@ export function PatternControls() {
               value={[pattern.scale]}
               onValueChange={([value]) => setPattern({ scale: value })}
               min={0.1}
-              max={3}
+              max={10}
               step={0.1}
               className='w-full'
             />
@@ -149,7 +120,7 @@ export function PatternControls() {
               value={[pattern.spacing ?? 1]}
               onValueChange={([value]) => setPattern({ spacing: value })}
               min={0.1}
-              max={5}
+              max={15}
               step={0.1}
               className='w-full'
             />
@@ -169,16 +140,24 @@ export function PatternControls() {
           </div>
           <div>
             <label className='text-xs text-gray-600 dark:text-gray-400 mb-2 block'>
-              Blur ({(pattern.blur ?? 0)}px)
+              Blur ({(pattern.blur ?? 0).toFixed(1)}px)
             </label>
-            <Slider
-              value={[pattern.blur ?? 0]}
-              onValueChange={([value]) => setPattern({ blur: value })}
-              min={0}
-              max={50}
-              step={1}
-              className='w-full'
-            />
+            {(() => {
+              const sliderValue = (pattern.blur ?? 0) * 5 // 0-20px -> 0-100 UI
+              return (
+                <Slider
+                  value={[sliderValue]}
+                  onValueChange={([val]) => {
+                    const newBlur = val / 5 // map back to px
+                    setPattern({ blur: newBlur })
+                  }}
+                  min={0}
+                  max={100}
+                  step={1}
+                  className='w-full'
+                />
+              )
+            })()}
           </div>
         </CardContent>
       )}

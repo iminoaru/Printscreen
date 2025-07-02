@@ -92,9 +92,9 @@ function createZigzagPattern(
   patternContext.strokeStyle = color
   patternContext.lineWidth = 1 * scale
   patternContext.beginPath()
-  patternContext.moveTo(0, size * 0.75)
+  patternContext.moveTo(-patternContext.lineWidth, size * 0.75)
   patternContext.lineTo(size * 0.5, size * 0.25)
-  patternContext.lineTo(size, size * 0.75)
+  patternContext.lineTo(size + patternContext.lineWidth, size * 0.75)
   patternContext.stroke()
 
   return patternCanvas
@@ -133,17 +133,24 @@ function createSwigglePattern(
   color: string
 ): HTMLCanvasElement {
   const patternCanvas = document.createElement('canvas')
-  const patternContext = patternCanvas.getContext('2d')!
+  const ctx = patternCanvas.getContext('2d')!
   const size = 20 * spacing
   patternCanvas.width = size
   patternCanvas.height = size
-  patternContext.strokeStyle = color
-  patternContext.lineWidth = 1 * scale
-  patternContext.beginPath()
-  patternContext.moveTo(0, size / 2)
-  patternContext.quadraticCurveTo(size / 4, size / 4, size / 2, size / 2)
-  patternContext.quadraticCurveTo((size * 3) / 4, (size * 3) / 4, size, size / 2)
-  patternContext.stroke()
+
+  ctx.strokeStyle = color
+  ctx.lineWidth = 1 * scale
+  ctx.lineCap = 'square'
+  ctx.lineJoin = 'miter'
+
+  const amplitude = size / 4
+  ctx.beginPath()
+  for (let x = 0; x <= size; x += 1) {
+    const y = size / 2 + amplitude * Math.sin((2 * Math.PI * x) / size)
+    if (x === 0) ctx.moveTo(x, y)
+    else ctx.lineTo(x, y)
+  }
+  ctx.stroke()
   return patternCanvas
 }
 
@@ -175,23 +182,24 @@ function createWavePattern(
   color: string
 ): HTMLCanvasElement {
   const patternCanvas = document.createElement('canvas')
-  const patternContext = patternCanvas.getContext('2d')!
+  const ctx = patternCanvas.getContext('2d')!
   const size = 30 * spacing
   patternCanvas.width = size
   patternCanvas.height = size
-  patternContext.strokeStyle = color
-  patternContext.lineWidth = 1.5 * scale
-  patternContext.beginPath()
-  patternContext.moveTo(0, size / 2)
-  patternContext.bezierCurveTo(
-    size / 4,
-    size / 4,
-    (3 * size) / 4,
-    (3 * size) / 4,
-    size,
-    size / 2
-  )
-  patternContext.stroke()
+
+  ctx.strokeStyle = color
+  ctx.lineWidth = 1.5 * scale
+  ctx.lineCap = 'square'
+  ctx.lineJoin = 'miter'
+
+  const amplitude = size / 3
+  ctx.beginPath()
+  for (let x = 0; x <= size; x += 1) {
+    const y = size / 2 + amplitude * Math.sin((2 * Math.PI * x) / size)
+    if (x === 0) ctx.moveTo(x, y)
+    else ctx.lineTo(x, y)
+  }
+  ctx.stroke()
   return patternCanvas
 }
 
@@ -251,7 +259,8 @@ export function generatePattern(
   scale: number = 1,
   spacing: number = 1,
   color: string = '#ffffff',
-  rotation: number = 0
+  rotation: number = 0,
+  blur: number = 0
 ): HTMLCanvasElement {
   let patternCanvas: HTMLCanvasElement
 
@@ -289,7 +298,42 @@ export function generatePattern(
     rotatedContext.translate(size / 2, size / 2)
     rotatedContext.rotate((rotation * Math.PI) / 180)
     rotatedContext.drawImage(patternCanvas, -size / 2, -size / 2)
-    return rotatedCanvas
+    patternCanvas = rotatedCanvas
+  }
+
+  if (blur > 0) {
+    const size = patternCanvas.width
+    const radius = Math.ceil(blur)
+    const extended = size + radius * 2
+
+    // 1. Tile the original pattern in a 3×3 grid on a larger canvas
+    const tiled = document.createElement('canvas')
+    tiled.width = extended
+    tiled.height = extended
+    const tCtx = tiled.getContext('2d')!
+    for (let dx = -1; dx <= 1; dx++) {
+      for (let dy = -1; dy <= 1; dy++) {
+        tCtx.drawImage(patternCanvas, (dx + 1) * size, (dy + 1) * size)
+      }
+    }
+
+    // 2. Blur the tiled canvas
+    const blurred = document.createElement('canvas')
+    blurred.width = extended
+    blurred.height = extended
+    const bCtx = blurred.getContext('2d')!
+    bCtx.filter = `blur(${blur}px)`
+    bCtx.drawImage(tiled, 0, 0)
+
+    // 3. Crop the center so edges wrap seamlessly
+    const finalCanvas = document.createElement('canvas')
+    finalCanvas.width = size
+    finalCanvas.height = size
+    finalCanvas
+      .getContext('2d')!
+      .drawImage(blurred, radius, radius, size, size, 0, 0, size, size)
+
+    patternCanvas = finalCanvas
   }
 
   return patternCanvas

@@ -1,5 +1,4 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
 
 export type AspectRatio = 'square' | '4:3' | '2:1' | '3:2'
 
@@ -88,94 +87,80 @@ export interface EditorState {
   set: (fn: (state: EditorState) => EditorState) => void
 }
 
-export const useEditorStore = create<EditorState>()(
-  persist(
-    (set) => ({
-      screenshot: {
-        src: null,
-        scale: 1,
-        rotation: 0,
-        radius: 12,
-        offsetX: 0,
-        offsetY: 0,
-      },
-      shadow: {
-        enabled: true,
-        elevation: 20,
-        side: 'bottom-right',
-        softness: 20,
-        color: '#000000',
-        intensity: 0.5,
-      },
-      background: {
-        mode: 'solid',
-        colorA: '#ffffff',
-        colorB: '#f0f0f0',
-        gradientDirection: 0,
-      },
-      pattern: {
-        enabled: false,
-        type: 'dots',
-        opacity: 0.2,
-        scale: 1,
-        spacing: 1,
-        rotation: 0,
-        color: '#000000',
-        blur: 0,
-      },
-      frame: {
-        enabled: true,
-        type: 'solid',
-        color: '#000000',
-        width: 2,
-        padding: 24,
-        title: 'screenshot.png',
-        theme: 'dark',
-      },
-      canvas: {
-        aspectRatio: 'square',
-        padding: 40,
-        frameColor: '#ffffff',
-        exportMultiplier: 2,
-        exportFormat: 'png',
-        exportQuality: 0.9,
-      },
+export const useEditorStore = create<EditorState>((set) => ({
+  screenshot: {
+    src: null,
+    scale: 1,
+    rotation: 0,
+    radius: 12,
+    offsetX: 0,
+    offsetY: 0,
+  },
+  shadow: {
+    enabled: true,
+    elevation: 20,
+    side: 'bottom-right',
+    softness: 20,
+    color: '#000000',
+    intensity: 0.5,
+  },
+  background: {
+    mode: 'solid',
+    colorA: '#ffffff',
+    colorB: '#f0f0f0',
+    gradientDirection: 0,
+  },
+  pattern: {
+    enabled: false,
+    type: 'dots',
+    opacity: 0.2,
+    scale: 1,
+    spacing: 1,
+    rotation: 0,
+    color: '#000000',
+    blur: 0,
+  },
+  frame: {
+    enabled: true,
+    type: 'solid',
+    color: '#000000',
+    width: 2,
+    padding: 24,
+    title: 'screenshot.png',
+    theme: 'dark',
+  },
+  canvas: {
+    aspectRatio: 'square',
+    padding: 40,
+    frameColor: '#ffffff',
+    exportMultiplier: 2,
+    exportFormat: 'png',
+    exportQuality: 0.9,
+  },
 
-      setScreenshot: (screenshot) =>
-        set((state) => ({
-          screenshot: { ...state.screenshot, ...screenshot },
-        })),
-      setShadow: (shadow) =>
-        set((state) => ({
-          shadow: { ...state.shadow, ...shadow },
-        })),
-      setBackground: (background) =>
-        set((state) => ({
-          background: { ...state.background, ...background },
-        })),
-      setPattern: (pattern) =>
-        set((state) => ({
-          pattern: { ...state.pattern, ...pattern },
-        })),
-      setFrame: (frame) =>
-        set((state) => ({
-          frame: { ...state.frame, ...frame },
-        })),
-      setCanvas: (canvas) =>
-        set((state) => ({
-          canvas: { ...state.canvas, ...canvas },
-        })),
-      set: (fn) => set(fn),
-    }),
-    {
-      name: 'editor-store',
-      partialize: (state) => ({
-        background: state.background,
-        canvas: state.canvas,
-        pattern: state.pattern,
-        shadow: state.shadow,
-        frame: state.frame,
-      }),
-    }
-  )
-) 
+  setScreenshot: (screenshot) =>
+    set((state) => ({
+      screenshot: { ...state.screenshot, ...screenshot },
+    })),
+  setShadow: (shadow) =>
+    set((state) => ({
+      shadow: { ...state.shadow, ...shadow },
+    })),
+  setBackground: (background) =>
+    set((state) => ({
+      background: { ...state.background, ...background },
+    })),
+  setPattern: (pattern) =>
+    set((state) => ({
+      pattern: { ...state.pattern, ...pattern },
+    })),
+  setFrame: (frame) =>
+    set((state) => ({
+      frame: { ...state.frame, ...frame },
+    })),
+  setCanvas: (canvas) =>
+    set((state) => ({
+      canvas: { ...state.canvas, ...canvas },
+    })),
+  set: (fn) => set(fn),
+})) 

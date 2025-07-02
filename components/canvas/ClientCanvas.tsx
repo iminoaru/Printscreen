@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { Stage, Layer, Rect, Image as KonvaImage, Group, Circle, Text } from 'react-konva'
-import Konva from 'konva'
 import { useEditorStore } from '@/lib/store'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu'
@@ -33,7 +32,8 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
       patternStyle.scale,
       patternStyle.spacing,
       patternStyle.color,
-      patternStyle.rotation
+      patternStyle.rotation,
+      patternStyle.blur
     )
     setPatternImage(newPattern)
   }, [
@@ -43,6 +43,7 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
     patternStyle.spacing,
     patternStyle.color,
     patternStyle.rotation,
+    patternStyle.blur,
   ])
 
   /* ─────────────────── layout helpers ─────────────────── */
@@ -77,7 +78,6 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
       patternRectRef.current.cache()
     }
   }, [
-    patternStyle.blur,
     patternImage,
     canvasW,
     canvasH,
@@ -103,7 +103,7 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
       ? frame.width + 2
       : 0
   const windowPadding = showFrame && frame.type === 'window' ? frame.padding : 0
-  const windowHeader = showFrame && frame.type === 'window' ? 30 : 0
+  const windowHeader = showFrame && frame.type === 'window' ? 40 : 0
   const eclipseBorder = showFrame && frame.type === 'eclipse' ? frame.width + 2 : 0
 
   const framedW = imageScaledW + frameOffset * 2 + windowPadding * 2 + eclipseBorder
@@ -208,8 +208,6 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
                 fillPatternImage={patternImage as any}
                 fillPatternRepeat='repeat'
                 opacity={patternStyle.opacity}
-                filters={[Konva.Filters.Blur]}
-                blurRadius={patternStyle.blur}
                 perfectDrawEnabled={false}
               />
             )}
@@ -250,14 +248,12 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
               {/* Ruler Frame */}
               {showFrame && frame.type === 'ruler' && (
                 <Group>
-                  {/* Pure white plastic ruler background */}
                   <Rect 
                     width={framedW} 
                     height={framedH}
                     cornerRadius={screenshot.radius} 
                   />
                   
-                  {/* Subtle inner highlight for plastic feel */}
                   <Rect 
                     width={framedW - 1} 
                     height={framedH - 1} 
@@ -268,7 +264,6 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
                     cornerRadius={Math.max(0, screenshot.radius - 2)} 
                   />
                   
-                  {/* Ruler marks with proper corner clipping */}
                   <Group>
                     <Rect width={framedW} height={framedH} fill="rgba(255, 255, 255, 0.5)" cornerRadius={screenshot.radius} />
                     <Group globalCompositeOperation="source-atop">
@@ -291,7 +286,6 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
                     </Group>
                   </Group>
                   
-                  {/* Outer edge for definition */}
                   <Rect 
                     width={framedW} 
                     height={framedH} 
@@ -301,6 +295,7 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
                   />
                 </Group>
               )}
+
 
               {/* Infinite Mirror Frame */}
               {showFrame && frame.type === 'infinite-mirror' && (
@@ -341,6 +336,7 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
                   />
                 </Group>
               )}
+              
 
               {/* Window Frame */}
               {showFrame && frame.type === 'window' && (
@@ -357,9 +353,9 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
                     fill={frame.theme === 'dark' ? '#4a4a4a' : '#e2e2e2'}
                     cornerRadius={[screenshot.radius, screenshot.radius, 0, 0]}
                   />
-                  <Circle x={15} y={15} radius={5} fill="#ff5f57" />
-                  <Circle x={35} y={15} radius={5} fill="#febc2e" />
-                  <Circle x={55} y={15} radius={5} fill="#28c840" />
+                  <Circle x={25} y={20} radius={10} fill="#ff5f57" />
+                  <Circle x={50} y={20} radius={10} fill="#febc2e" />
+                  <Circle x={75} y={20} radius={10} fill="#28c840" />
                   <Text
                     text={frame.title}
                     x={0}
@@ -369,7 +365,7 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
                     align="center"
                     verticalAlign="middle"
                     fill={frame.theme === 'dark' ? '#f0f0f0' : '#4f4f4f'}
-                    fontSize={12}
+                    fontSize={16}
                   />
                 </>
               )}
@@ -380,7 +376,7 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
                 y={frameOffset + windowPadding + windowHeader}
                 width={imageScaledW}
                 height={imageScaledH}
-                cornerRadius={screenshot.radius}
+                cornerRadius={showFrame && frame.type === 'window' ? [0, 0, screenshot.radius, screenshot.radius] : screenshot.radius}
                 imageSmoothingEnabled={false}
               />
             </Group>
