@@ -7,11 +7,10 @@ import { Slider } from '@/components/ui/slider'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Button } from '@/components/ui/button'
 import { Palette } from 'lucide-react'
+import { Input } from '@/components/ui/input'
 
 export function BackgroundControls() {
   const { background, setBackground } = useEditorStore()
-  const commonInputClasses =
-    'flex-1 px-2 py-1 text-sm border border-[var(--sidebar-border)] rounded bg-[var(--secondary)] text-[var(--panel-fg)] placeholder:text-muted-foreground focus:ring-1 focus:ring-accent focus:border-accent outline-none'
 
   return (
     <div className="space-y-4">
@@ -81,18 +80,21 @@ export function BackgroundControls() {
         <div>
           <label className="text-xs text-muted-foreground mb-2 block">Color</label>
           <div className="flex items-center gap-2">
-            <input
-              type="color"
-              value={background.colorA}
-              onChange={(e) => setBackground({ colorA: e.target.value })}
-              className="w-9 h-9 rounded border-none cursor-pointer"
+            <div
+              className="relative size-9 shrink-0 overflow-hidden rounded-lg"
               style={{ backgroundColor: background.colorA }}
-            />
-            <input
+            >
+              <input
+                type="color"
+                value={background.colorA}
+                onChange={(e) => setBackground({ colorA: e.target.value })}
+                className="absolute inset-0 size-full cursor-pointer opacity-0"
+              />
+            </div>
+            <Input
               type="text"
               value={background.colorA}
               onChange={(e) => setBackground({ colorA: e.target.value })}
-              className={commonInputClasses}
             />
           </div>
         </div>
@@ -101,39 +103,47 @@ export function BackgroundControls() {
       {background.mode === 'gradient' && (
         <div className="space-y-4">
           <div className="flex items-start gap-4 overflow-hidden">
-            <div className="flex-1 min-w-0 py-2 px-4 rounded-lg bg-[var(--secondary)]/80">
+            <div className="flex-1 min-w-0 py-2 px-4 rounded-lg bg-secondary/80">
               <label className="text-xs text-muted-foreground mb-2 block">Start</label>
               <div className="flex items-center gap-2">
-                <input
-                  type="color"
-                  value={background.colorA}
-                  onChange={(e) => setBackground({ colorA: e.target.value })}
-                  className="w-7 h-7 rounded cursor-pointer flex-shrink-0"
+                <div
+                  className="relative size-7 shrink-0 overflow-hidden rounded-md"
                   style={{ backgroundColor: background.colorA }}
-                />
-                <input
+                >
+                  <input
+                    type="color"
+                    value={background.colorA}
+                    onChange={(e) => setBackground({ colorA: e.target.value })}
+                    className="absolute inset-0 size-full cursor-pointer opacity-0"
+                  />
+                </div>
+                <Input
                   type="text"
                   value={background.colorA}
                   onChange={(e) => setBackground({ colorA: e.target.value })}
-                  className="min-w-0 flex-1 px-2 py-1 text-sm border border-[var(--sidebar-border)] rounded bg-[var(--secondary)] text-[var(--panel-fg)] placeholder:text-muted-foreground focus:ring-1 focus:ring-accent focus:border-accent outline-none"
+                  className="min-w-0"
                 />
               </div>
             </div>
-            <div className="flex-1 min-w-0 py-2 px-4 rounded-lg bg-[var(--secondary)]/80">
+            <div className="flex-1 min-w-0 py-2 px-4 rounded-lg bg-secondary/80">
               <label className="text-xs text-muted-foreground mb-2 block">End</label>
               <div className="flex items-center gap-2">
-                <input
-                  type="color"
-                  value={background.colorB}
-                  onChange={(e) => setBackground({ colorB: e.target.value })}
-                  className="w-7 h-7 rounded cursor-pointer flex-shrink-0"
+                <div
+                  className="relative size-7 shrink-0 overflow-hidden rounded-md"
                   style={{ backgroundColor: background.colorB }}
-                />
-                <input
+                >
+                  <input
+                    type="color"
+                    value={background.colorB}
+                    onChange={(e) => setBackground({ colorB: e.target.value })}
+                    className="absolute inset-0 size-full cursor-pointer opacity-0"
+                  />
+                </div>
+                <Input
                   type="text"
                   value={background.colorB}
                   onChange={(e) => setBackground({ colorB: e.target.value })}
-                  className="min-w-0 flex-1 px-2 py-1 text-sm border border-[var(--sidebar-border)] rounded bg-[var(--secondary)] text-[var(--panel-fg)] placeholder:text-muted-foreground focus:ring-1 focus:ring-accent focus:border-accent outline-none"
+                  className="min-w-0"
                 />
               </div>
             </div>

@@ -1,20 +1,12 @@
 'use client'
 
 import { useEditorStore } from '@/lib/store'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { Slider } from '@/components/ui/slider'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Input } from '@/components/ui/input'
 
 export function ShadowControls() {
   const { shadow, setShadow } = useEditorStore()
-  const commonInputClasses =
-    'flex-1 px-2 py-1 text-sm border border-[var(--sidebar-border)] rounded bg-[var(--secondary)] text-[var(--panel-fg)] placeholder:text-muted-foreground focus:ring-1 focus:ring-accent focus:border-accent outline-none'
 
   return (
     <div className="space-y-4">
@@ -40,18 +32,21 @@ export function ShadowControls() {
         <div>
           <label className="text-xs text-muted-foreground mb-2 block">Color</label>
           <div className="flex items-center gap-2">
-            <input
-              type="color"
-              value={shadow.color}
-              onChange={(e) => setShadow({ color: e.target.value, enabled: true })}
-              className="w-10 h-8 rounded border-none cursor-pointer"
+            <div
+              className="relative size-9 shrink-0 overflow-hidden rounded-lg"
               style={{ backgroundColor: shadow.color }}
-            />
-            <input
+            >
+              <input
+                type="color"
+                value={shadow.color}
+                onChange={(e) => setShadow({ color: e.target.value, enabled: true })}
+                className="absolute inset-0 size-full cursor-pointer opacity-0"
+              />
+            </div>
+            <Input
               type="text"
               value={shadow.color}
               onChange={(e) => setShadow({ color: e.target.value, enabled: true })}
-              className={commonInputClasses}
             />
           </div>
         </div>

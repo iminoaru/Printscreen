@@ -48,12 +48,12 @@ export function ExportControls() {
         </p>
       </div>
       
-      <div className="flex gap-2">
+      <div className="flex gap-4">
         <Button onClick={() => handleExport('png')} size="lg">
-          PNG
+          Crisp
         </Button>
         <Button onClick={() => handleExport('jpeg')} size="lg">
-          JPEG
+          Compact
         </Button>
       </div>
     </div>

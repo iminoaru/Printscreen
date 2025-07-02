@@ -268,7 +268,6 @@ export function generatePattern(
     const size = patternCanvas.width
     const extended = size * 3
 
-    // Tile the original canvas in a 3×3 grid so every edge has data on both sides
     const tiled = document.createElement('canvas')
     tiled.width = extended
     tiled.height = extended
@@ -279,7 +278,6 @@ export function generatePattern(
       }
     }
 
-    // Apply blur to the tiled canvas
     const blurred = document.createElement('canvas')
     blurred.width = extended
     blurred.height = extended
@@ -287,7 +285,6 @@ export function generatePattern(
     bCtx.filter = `blur(${blur}px)`
     bCtx.drawImage(tiled, 0, 0)
 
-    // Crop the centre tile back out (which now has seamless edges)
     const finalCanvas = document.createElement('canvas')
     finalCanvas.width = size
     finalCanvas.height = size

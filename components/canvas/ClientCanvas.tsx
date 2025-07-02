@@ -23,7 +23,6 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
     setCanvasRef,
   } = useEditorStore()
 
-  // Set the canvas ref in the store when it's ready
   useEffect(() => {
     if (stageRef.current) {
       setCanvasRef(stageRef)
@@ -106,7 +105,7 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
     patternStyle.blur,
   ])
 
-  // The user's screenshot must be contained within the content box.
+  
   let imageScaledW, imageScaledH
   if (contentW / contentH > imageAspect) {
     imageScaledH = contentH * screenshot.scale
@@ -130,6 +129,7 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
 
   const framedW = imageScaledW + frameOffset * 2 + windowPadding * 2 + eclipseBorder
   const framedH = imageScaledH + frameOffset * 2 + windowPadding * 2 + windowHeader + eclipseBorder
+
 
   /* ─────────────────── background + shadow helpers ─────────────────── */
   const gradientProps =
@@ -236,7 +236,6 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
                 offsetY={framedH / 2}
                 rotation={screenshot.rotation}
               >
-                {/* The visible elements themselves carry the drop shadow so it is not masked by later draws */}
 
                 {/* Solid Frame */}
                 {showFrame && frame.type === 'solid' && (
