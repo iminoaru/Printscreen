@@ -39,7 +39,6 @@ export interface PatternStyle {
     | 'cross'
     | 'wave'
     | 'checkerboard'
-    | 'rings'
   opacity: number
   scale: number
   spacing: number

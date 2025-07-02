@@ -8,7 +8,6 @@ export type PatternType =
   | 'cross'
   | 'wave'
   | 'checkerboard'
-  | 'rings'
 
 function createDotPattern(
   scale: number,
@@ -220,40 +219,6 @@ function createCheckerboardPattern(
   return patternCanvas
 }
 
-function createRingsPattern(
-  scale: number,
-  spacing: number,
-  color: string
-): HTMLCanvasElement {
-  const patternCanvas = document.createElement('canvas')
-  const patternContext = patternCanvas.getContext('2d')!
-  const s = 25 * spacing // distance between ring centers
-  const radius = 8 * scale
-
-  patternCanvas.width = s
-  patternCanvas.height = s * Math.sqrt(3)
-
-  patternContext.strokeStyle = color
-  patternContext.lineWidth = 1.5 * scale
-
-  const drawRingArc = (x: number, y: number, start: number, end: number) => {
-    patternContext.beginPath()
-    patternContext.arc(x, y, radius, start * Math.PI, end * Math.PI)
-    patternContext.stroke()
-  }
-
-  // center circle
-  drawRingArc(s / 2, (s * Math.sqrt(3)) / 2, 0, 2)
-
-  // corner circles for tiling
-  drawRingArc(0, 0, 0, 0.5)
-  drawRingArc(s, 0, 0.5, 1)
-  drawRingArc(0, s * Math.sqrt(3), 1.5, 2)
-  drawRingArc(s, s * Math.sqrt(3), 1, 1.5)
-
-  return patternCanvas
-}
-
 export function generatePattern(
   type: PatternType,
   scale: number = 1,
@@ -282,8 +247,6 @@ export function generatePattern(
     patternCanvas = createWavePattern(scale, spacing, color)
   } else if (type === 'checkerboard') {
     patternCanvas = createCheckerboardPattern(scale, spacing, color)
-  } else if (type === 'rings') {
-    patternCanvas = createRingsPattern(scale, spacing, color)
   } else {
     // fallback
     patternCanvas = createDotPattern(scale, spacing, color)
@@ -303,21 +266,20 @@ export function generatePattern(
 
   if (blur > 0) {
     const size = patternCanvas.width
-    const radius = Math.ceil(blur)
-    const extended = size + radius * 2
+    const extended = size * 3
 
-    // 1. Tile the original pattern in a 3×3 grid on a larger canvas
+    // Tile the original canvas in a 3×3 grid so every edge has data on both sides
     const tiled = document.createElement('canvas')
     tiled.width = extended
     tiled.height = extended
     const tCtx = tiled.getContext('2d')!
-    for (let dx = -1; dx <= 1; dx++) {
-      for (let dy = -1; dy <= 1; dy++) {
-        tCtx.drawImage(patternCanvas, (dx + 1) * size, (dy + 1) * size)
+    for (let dx = 0; dx < 3; dx++) {
+      for (let dy = 0; dy < 3; dy++) {
+        tCtx.drawImage(patternCanvas, dx * size, dy * size)
       }
     }
 
-    // 2. Blur the tiled canvas
+    // Apply blur to the tiled canvas
     const blurred = document.createElement('canvas')
     blurred.width = extended
     blurred.height = extended
@@ -325,13 +287,13 @@ export function generatePattern(
     bCtx.filter = `blur(${blur}px)`
     bCtx.drawImage(tiled, 0, 0)
 
-    // 3. Crop the center so edges wrap seamlessly
+    // Crop the centre tile back out (which now has seamless edges)
     const finalCanvas = document.createElement('canvas')
     finalCanvas.width = size
     finalCanvas.height = size
     finalCanvas
       .getContext('2d')!
-      .drawImage(blurred, radius, radius, size, size, 0, 0, size, size)
+      .drawImage(blurred, size, size, size, size, 0, 0, size, size)
 
     patternCanvas = finalCanvas
   }
@@ -349,5 +311,4 @@ export const patternTypes = [
   { value: 'cross', label: 'Cross' },
   { value: 'wave', label: 'Wave' },
   { value: 'checkerboard', label: 'Checkerboard' },
-  { value: 'rings', label: 'Rings' },
 ] as const 

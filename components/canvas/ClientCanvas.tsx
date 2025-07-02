@@ -82,6 +82,7 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
     canvasW,
     canvasH,
     patternStyle.opacity,
+    patternStyle.blur,
   ])
 
   // The user's screenshot must be contained within the content box.
