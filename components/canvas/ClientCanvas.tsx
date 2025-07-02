@@ -5,6 +5,8 @@ import { Stage, Layer, Rect, Image as KonvaImage } from 'react-konva'
 import Konva from 'konva'
 import { useEditorStore } from '@/lib/store'
 import { Button } from '@/components/ui/button'
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu'
+import { cn } from '@/lib/utils'
 import { generatePattern } from '@/lib/patterns'
 
 function CanvasRenderer({ image }: { image: HTMLImageElement }) {
@@ -137,19 +139,22 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
     : {}
 
   /* ─────────────────── HQ export (dynamic pixelRatio) ─────────────────── */
-  const handleExport = () => {
+  const handleExport = (format: 'png' | 'jpeg') => {
     if (!stageRef.current || !image) return
     const shrinkFactor = image.naturalWidth / imageScaledW
     const desiredPR = canvas.exportMultiplier * shrinkFactor
     const MAX_EDGE = 8192
     const cappedPR = Math.min(desiredPR, MAX_EDGE / canvasW)
+    const mimeType = format === 'jpeg' ? 'image/jpeg' : 'image/png'
     const uri = stageRef.current.toDataURL({
-      mimeType: 'image/png',
+      mimeType,
+      quality: format === 'jpeg' ? canvas.exportQuality ?? 0.9 : undefined,
       pixelRatio: cappedPR,
       imageSmoothingEnabled: true,
     })
     const link = document.createElement('a')
-    link.download = `media-kit-${Date.now()}.png`
+    const extension = format === 'jpeg' ? 'jpg' : 'png'
+    link.download = `prtscn-${Date.now()}.${extension}`
     link.href = uri
     document.body.appendChild(link)
     link.click()
@@ -211,7 +216,25 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
         </Stage>
       </div>
 
-      <Button onClick={handleExport}>Download PNG</Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button>Download</Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className={cn('bg-white dark:bg-gray-800 shadow-lg rounded-md p-1 text-sm')}> 
+          <DropdownMenuItem
+            onSelect={() => handleExport('png')}
+            className={cn('cursor-pointer px-3 py-2 rounded-md focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700')}
+          >
+            PNG (lossless)
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onSelect={() => handleExport('jpeg')}
+            className={cn('cursor-pointer px-3 py-2 rounded-md focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700')}
+          >
+            JPEG (smaller)
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   )
 }

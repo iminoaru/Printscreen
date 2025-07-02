@@ -54,6 +54,8 @@ export interface CanvasSettings {
   padding: number
   frameColor: string
   exportMultiplier: number
+  exportFormat: 'png' | 'jpeg'
+  exportQuality: number
 }
 
 export interface EditorState {
@@ -112,6 +114,8 @@ export const useEditorStore = create<EditorState>()(
         padding: 40,
         frameColor: '#ffffff',
         exportMultiplier: 8,
+        exportFormat: 'png',
+        exportQuality: 0.9,
       },
       
       setScreenshot: (screenshot) =>
