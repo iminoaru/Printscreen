@@ -36,18 +36,19 @@ export function ExportControls() {
     document.body.removeChild(link)
   }
 
-  if (!screenshot.src) {
-    return null
-  }
+//   if (!screenshot.src) {
+//     return null
+//   }
 
   return (
     <div className="flex items-center justify-between gap-4">
       <div className="flex-1">
-        <p className="text-xs text-muted-foreground">
-          <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">Star us on the hub!</a>
+        <p className="text-sm text-muted-foreground">
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">⭐️ us on the hub!</a>
         </p>
       </div>
       
+    {screenshot.src && (
       <div className="flex gap-4">
         <Button onClick={() => handleExport('png')} size="lg">
           Crisp
@@ -56,6 +57,7 @@ export function ExportControls() {
           Compact
         </Button>
       </div>
+    )}
     </div>
   )
 } 

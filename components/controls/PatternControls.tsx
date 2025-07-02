@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import { useMemo } from 'react'
 import { useEditorStore } from '@/lib/store'
@@ -43,7 +43,7 @@ export function PatternControls() {
       <div className='space-y-4 pt-4 border-t border-[var(--sidebar-border)]'>
         <div>
           <label className='text-xs text-muted-foreground mb-2 block'>Style</label>
-          <div className='grid grid-cols-5 gap-2'>
+          <div className='grid grid-cols-3 gap-2'>
             {patternTypes.map(({ value }) => (
               <div key={value} onClick={() => setPattern({ type: value, enabled: true })}>
                 <PatternPreview

@@ -10,14 +10,15 @@ const frameOptions = [
   { value: 'none', label: 'None' },
   { value: 'solid', label: 'Solid' },
   { value: 'glassy', label: 'Glassy' },
-  { value: 'window-light', label: 'Window' },
-  { value: 'window-dark', label: 'Window (Dark)' },
   { value: 'infinite-mirror', label: 'Mirror' },
-  { value: 'ruler', label: 'Ruler' },
-  { value: 'eclipse', label: 'Eclipse' },
+  { value: 'window-light', label: 'Window' },
+  { value: 'window-dark', label: 'Dark Window' },
   { value: 'stack-light', label: 'Stack' },
-  { value: 'stack-dark', label: 'Stack (Dark)' },
+  { value: 'stack-dark', label: 'Dark Stack' },
+  { value: 'ruler', label: 'Ruler' },
+  { value: 'eclipse', label: 'Neo' },
   { value: 'dotted', label: 'Dotted' },
+  { value: 'photo', label: 'Photo' },
 ] as const
 
 type FrameType = (typeof frameOptions)[number]['value']
@@ -77,7 +78,19 @@ const framePreviews: Record<FrameType, React.ReactNode> = {
       </div>
     </div>
   ),
-  ruler: <div className="size-full border-2 border-black/60 bg-yellow-400/50" />,
+  ruler: (
+    <div className="relative size-full overflow-hidden rounded-sm bg-amber-400/80">
+      <div className="absolute left-0 top-0 h-full w-px bg-black/70" />
+      <div className="absolute left-0 top-0 h-px w-full bg-black/70" />
+      <div className="absolute left-2 top-0 h-1 w-px bg-black/70" />
+      <div className="absolute left-4 top-0 h-1.5 w-px bg-black/70" />
+      <div className="absolute left-6 top-0 h-1 w-px bg-black/70" />
+      <div className="absolute left-8 top-0 h-2 w-px bg-black/70" />
+      <div className="absolute top-2 left-0 w-1 h-px bg-black/70" />
+      <div className="absolute top-4 left-0 w-1.5 h-px bg-black/70" />
+      <div className="absolute top-6 left-0 w-1 h-px bg-black/70" />
+    </div>
+  ),
   eclipse: <div className="size-full rounded-full bg-secondary-foreground" />,
   'stack-light': (
     <div className="relative size-full">
@@ -92,6 +105,11 @@ const framePreviews: Record<FrameType, React.ReactNode> = {
     </div>
   ),
   dotted: <div className="size-full rounded-md border-2 border-dashed border-primary/80" />,
+  photo: (
+    <div className="size-full rounded-sm bg-white p-1 shadow-md">
+      <div className="size-full bg-secondary" />
+    </div>
+  ),
 }
 
 export function FrameControls() {
@@ -121,7 +139,7 @@ export function FrameControls() {
       <div className="space-y-4 border-t border-border pt-4">
         <div>
           <label className="mb-2 block text-xs text-muted-foreground">Style</label>
-          <div className="grid grid-cols-4 gap-x-2 gap-y-4">
+          <div className="grid grid-cols-3 gap-x-2 gap-y-4">
             {frameOptions.map(({ value }) => (
               <FramePreview
                 key={value}

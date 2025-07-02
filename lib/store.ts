@@ -50,7 +50,7 @@ export interface PatternStyle {
 
 export interface FrameStyle {
   enabled: boolean
-  type: 'none' | 'solid' | 'window' | 'glassy' | 'infinite-mirror' | 'ruler' | 'eclipse' | 'stack' | 'dotted'
+  type: 'none' | 'solid' | 'window' | 'glassy' | 'infinite-mirror' | 'ruler' | 'eclipse' | 'stack' | 'dotted' | 'photo'
   // Solid
   color: string
   width: number

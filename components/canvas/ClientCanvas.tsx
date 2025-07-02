@@ -118,7 +118,7 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
   /* ─────────────────── frame helpers ─────────────────── */
   const showFrame = frame.enabled && frame.type !== 'none'
   const frameOffset =
-    showFrame && (frame.type === 'solid' || frame.type === 'glassy')
+    showFrame && (frame.type === 'solid' || frame.type === 'glassy' || frame.type === 'photo')
       ? frame.width
       : showFrame && frame.type === 'ruler'
       ? frame.width + 2
@@ -440,13 +440,30 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
                   />
                 )}
 
+                {/* Photo Frame */}
+                {showFrame && frame.type === 'photo' && (
+                  <Rect
+                    width={framedW}
+                    height={framedH}
+                    fill="#ffffff"
+                    cornerRadius={screenshot.radius}
+                    {...shadowProps}
+                  />
+                )}
+
                 <KonvaImage
                   image={image}
                   x={frameOffset + windowPadding}
                   y={frameOffset + windowPadding + windowHeader}
                   width={imageScaledW}
                   height={imageScaledH}
-                  cornerRadius={showFrame && frame.type === 'window' ? [0, 0, screenshot.radius, screenshot.radius] : screenshot.radius}
+                  cornerRadius={
+                    showFrame && frame.type === 'window'
+                      ? [0, 0, screenshot.radius, screenshot.radius]
+                      : showFrame && frame.type === 'photo'
+                      ? screenshot.radius * 0.8
+                      : screenshot.radius
+                  }
                   imageSmoothingEnabled={false}
                   {...(!showFrame || frame.type === 'none' || frame.type === 'dotted' ? shadowProps : {})}
                 />

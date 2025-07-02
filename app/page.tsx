@@ -6,12 +6,17 @@ import { ShadowControls } from '@/components/controls/ShadowControls'
 import { RoundnessControls } from '@/components/controls/RoundnessControls'
 import { ScreenshotControls } from '@/components/controls/ScreenshotControls'
 import { DimensionControls } from '@/components/controls/DimensionControls'
-import { PatternControls } from '@/components/controls/PatternControls'
 import { FrameControls } from '@/components/controls/FrameControls'
 import { NoiseControls } from '@/components/controls/NoiseControls'
 import { ExportControls } from '@/components/controls/ExportControls'
 import { Separator } from '@/components/ui/separator'
 import Image from 'next/image'
+import dynamic from 'next/dynamic'
+
+const PatternControls = dynamic(
+  () => import('@/components/controls/PatternControls').then(mod => mod.PatternControls),
+  { ssr: false }
+)
 
 export default function EditorPage() {
   return (
@@ -23,7 +28,7 @@ export default function EditorPage() {
           <div className="flex items-center gap-3">
             <Image src="/logo.png" alt="Logo" width={40} height={40} className="rounded-md" />
             <div>
-              <h1 className="text-2xl font-bold tracking-tighter -ml-2">Printscreen <span className="text-sm text-muted-foreground pl-4 font-semibold"> Make your screenshots presentable</span></h1>
+              <h1 className="text-2xl font-bold -ml-2">Printscreen <span className="text-sm text-muted-foreground pl-4 font-semibold"> Make your screenshots presentable</span></h1>
             </div>
           </div>
         </div>
