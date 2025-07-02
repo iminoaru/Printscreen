@@ -425,7 +425,6 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
                   strokeWidth={frame.width}
                   dash={[frame.width * 2, frame.width * 1.2]}
                   cornerRadius={screenshot.radius}
-                  {...shadowProps}
                 />
               )}
 
@@ -437,7 +436,7 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
                 height={imageScaledH}
                 cornerRadius={showFrame && frame.type === 'window' ? [0, 0, screenshot.radius, screenshot.radius] : screenshot.radius}
                 imageSmoothingEnabled={false}
-                {...(!showFrame || frame.type === 'none' ? shadowProps : {})}
+                {...(!showFrame || frame.type === 'none' || frame.type === 'dotted' ? shadowProps : {})}
               />
             </Group>
           </Layer>
