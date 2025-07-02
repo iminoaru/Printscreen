@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { Stage, Layer, Rect, Image as KonvaImage, Group, Circle, Text } from 'react-konva'
+import { Stage, Layer, Rect, Image as KonvaImage, Group, Circle, Text, Path } from 'react-konva'
 import { useEditorStore } from '@/lib/store'
 import { generatePattern } from '@/lib/patterns'
 
@@ -20,14 +20,7 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
     frame,
     canvas,
     noise,
-    setCanvasRef,
   } = useEditorStore()
-
-  useEffect(() => {
-    if (stageRef.current) {
-      setCanvasRef(stageRef)
-    }
-  }, [setCanvasRef])
 
   useEffect(() => {
     if (!patternStyle.enabled) {
@@ -118,7 +111,7 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
   /* ─────────────────── frame helpers ─────────────────── */
   const showFrame = frame.enabled && frame.type !== 'none'
   const frameOffset =
-    showFrame && (frame.type === 'solid' || frame.type === 'glassy' || frame.type === 'photo')
+    showFrame && (frame.type === 'solid' || frame.type === 'glassy')
       ? frame.width
       : showFrame && frame.type === 'ruler'
       ? frame.width + 2
@@ -402,7 +395,7 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
                       width={framedW}
                       height={framedH}
                       fill={frame.theme === 'dark' ? '#2f2f2f' : '#fefefe'}
-                      cornerRadius={screenshot.radius}
+                      cornerRadius={[screenshot.radius / 2, screenshot.radius / 2, screenshot.radius, screenshot.radius]}
                       {...shadowProps}
                     />
                     <Rect // header
@@ -440,15 +433,38 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
                   />
                 )}
 
-                {/* Photo Frame */}
-                {showFrame && frame.type === 'photo' && (
-                  <Rect
-                    width={framedW}
-                    height={framedH}
-                    fill="#ffffff"
-                    cornerRadius={screenshot.radius}
-                    {...shadowProps}
-                  />
+                {/* Focus Frame */}
+                {showFrame && frame.type === 'focus' && (
+                  <Group>
+                    <Path
+                      data={`M ${frameOffset}, ${frameOffset + frame.width * 1.5} Q ${frameOffset}, ${frameOffset} ${frameOffset + frame.width * 1.5}, ${frameOffset}`}
+                      stroke={frame.color}
+                      strokeWidth={frame.width}
+                      lineCap="round"
+                      {...shadowProps}
+                    />
+                    <Path
+                      data={`M ${frameOffset + imageScaledW}, ${frameOffset + imageScaledH - frame.width * 1.5} Q ${frameOffset + imageScaledW}, ${frameOffset + imageScaledH} ${frameOffset + imageScaledW - frame.width * 1.5}, ${frameOffset + imageScaledH}`}
+                      stroke={frame.color}
+                      strokeWidth={frame.width}
+                      lineCap="round"
+                      {...shadowProps}
+                    />
+                    <Path
+                      data={`M ${frameOffset + imageScaledW - frame.width * 1.5}, ${frameOffset} Q ${frameOffset + imageScaledW}, ${frameOffset} ${frameOffset + imageScaledW}, ${frameOffset + frame.width * 1.5}`}
+                      stroke={frame.color}
+                      strokeWidth={frame.width}
+                      lineCap="round"
+                      {...shadowProps}
+                    />
+                    <Path
+                      data={`M ${frameOffset + frame.width * 1.5}, ${frameOffset + imageScaledH} Q ${frameOffset}, ${frameOffset + imageScaledH} ${frameOffset}, ${frameOffset + imageScaledH - frame.width * 1.5}`}
+                      stroke={frame.color}
+                      strokeWidth={frame.width}
+                      lineCap="round"
+                      {...shadowProps}
+                    />
+                  </Group>
                 )}
 
                 <KonvaImage
@@ -460,7 +476,7 @@ function CanvasRenderer({ image }: { image: HTMLImageElement }) {
                   cornerRadius={
                     showFrame && frame.type === 'window'
                       ? [0, 0, screenshot.radius, screenshot.radius]
-                      : showFrame && frame.type === 'photo'
+                      : showFrame && frame.type === 'ruler'
                       ? screenshot.radius * 0.8
                       : screenshot.radius
                   }

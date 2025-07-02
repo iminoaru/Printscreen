@@ -15,14 +15,14 @@ export function NoiseControls() {
           setNoise({
             type: value as 'none' | 'noise' | 'paper',
             enabled: value !== 'none',
-            opacity: 0.1,
+            opacity: 0.05,
           })
         }}
         className="w-full"
       >
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="none">None</TabsTrigger>
-          <TabsTrigger value="noise">Film Grain</TabsTrigger>
+          <TabsTrigger value="noise">Noise</TabsTrigger>
           <TabsTrigger value="paper">Paper</TabsTrigger>
         </TabsList>
       </Tabs>

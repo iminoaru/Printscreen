@@ -11,18 +11,18 @@ export const metadata: Metadata = {
   title: "Printscreen | Make your screenshots beautiful",
   description: "A simple, beautiful, and intuitive app to make your screenshots presentable and shareable.",
   keywords: ["screenshot", "beautify", "editor", "image", "design", "social media", "marketing"],
-  authors: [{ name: "Your Name", url: "https://your-website.com" }],
-  creator: "Your Name",
+  authors: [{ name: "Sarthak Gaud", url: "https://sgaud.com" }],
+  creator: "Sarthak Gaud",
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://printscreen.app", // Replace with your actual URL
+    url: "https://printscreen.ink",
     title: "Printscreen | Make your screenshots beautiful",
     description: "A simple, beautiful, and intuitive app to make your screenshots presentable and shareable.",
     siteName: "Printscreen",
     images: [
       {
-        url: "https://printscreen.app/og-image.png", // Replace with your actual OG image URL
+        url: "https://printscreen.ink/og-image.png",
         width: 1200,
         height: 630,
         alt: "Printscreen App Interface",
@@ -33,8 +33,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Printscreen | Make your screenshots beautiful",
     description: "A simple, beautiful, and intuitive app to make your screenshots presentable and shareable.",
-    images: ["https://printscreen.app/og-image.png"], // Replace with your actual Twitter image URL
-    creator: "@your-twitter-handle",
+    images: ["https://printscreen.ink/og-image.png"],
+    creator: "@iminoaruu",
   },
 };
 
@@ -45,7 +45,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${figtree.variable} font-sans antialiased`}>{children}</body>
+      <body className={`${figtree.variable} font-sans antialiased light`} suppressHydrationWarning>{children}</body>
     </html>
   );
 }

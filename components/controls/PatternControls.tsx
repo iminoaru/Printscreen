@@ -14,6 +14,7 @@ interface PatternPreviewProps {
 
 function PatternPreview({ type, selected, onSelect }: PatternPreviewProps) {
   const patternUrl = useMemo(() => {
+    if (type === 'none') return ''
     const canvas = generatePattern(type, 1, 1, 'white', 0, 0)
     return canvas.toDataURL()
   }, [type])
@@ -21,10 +22,12 @@ function PatternPreview({ type, selected, onSelect }: PatternPreviewProps) {
   return (
     <button
       onClick={onSelect}
-      className='w-full h-12 rounded-lg cursor-pointer border-2 border-transparent aria-selected:border-accent'
+      className='w-full h-12 rounded-lg cursor-pointer border-2 border-transparent aria-selected:border-accent flex items-center justify-center'
       aria-selected={selected}
       style={{ backgroundColor: 'var(--secondary)', backgroundImage: `url(${patternUrl})` }}
-    />
+    >
+      {type === 'none' && <div className="size-8 rounded-md border-2 border-dashed border-muted-foreground/50" />}
+    </button>
   )
 }
 
@@ -45,11 +48,17 @@ export function PatternControls() {
           <label className='text-xs text-muted-foreground mb-2 block'>Style</label>
           <div className='grid grid-cols-3 gap-2'>
             {patternTypes.map(({ value }) => (
-              <div key={value} onClick={() => setPattern({ type: value, enabled: true })}>
+              <div key={value}>
                 <PatternPreview
                   type={value}
-                  selected={pattern.type === value}
-                  onSelect={() => setPattern({ type: value, enabled: true })}
+                  selected={value === 'none' ? !pattern.enabled : pattern.type === value && pattern.enabled}
+                  onSelect={() => {
+                    if (value === 'none') {
+                      set((state) => ({ ...state, pattern: { ...state.pattern, enabled: false } }))
+                    } else {
+                      setPattern({ type: value })
+                    }
+                  }}
                 />
               </div>
             ))}
@@ -85,7 +94,7 @@ export function PatternControls() {
             onValueChange={([value]) => setPattern({ opacity: value })}
             min={0}
             max={1}
-            step={0.1}
+            step={0.01}
             className='w-full'
           />
         </div>

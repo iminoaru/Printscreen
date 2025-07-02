@@ -18,8 +18,8 @@ export function RoundnessControls() {
             value={[screenshot.radius]}
             onValueChange={([value]) => setScreenshot({ radius: value })}
             min={0}
-            max={50}
-            step={1}
+            max={80}
+            step={0.5}
             className="w-full"
           />
         </div>

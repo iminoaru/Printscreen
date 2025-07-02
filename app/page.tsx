@@ -38,17 +38,17 @@ export default function EditorPage() {
           
           <DimensionControls />
           <Separator />
-          <FrameControls />
-          <Separator />
           <BackgroundControls />
+          <Separator />
+          <RoundnessControls />
           <Separator />
           <PatternControls />
           <Separator />
-          <NoiseControls />
+          <FrameControls />
           <Separator />
           <ShadowControls />
           <Separator />
-          <RoundnessControls />
+          <NoiseControls />
           <Separator />
           <ScreenshotControls />
         </div>

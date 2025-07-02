@@ -1,4 +1,5 @@
 export type PatternType =
+  | 'none'
   | 'dots'
   | 'grid'
   | 'diagonal'
@@ -6,7 +7,6 @@ export type PatternType =
   | 'zigzag'
   | 'swiggle'
   | 'cross'
-  | 'wave'
   | 'checkerboard'
 
 function createDotPattern(
@@ -175,33 +175,6 @@ function createCrossPattern(
   return patternCanvas
 }
 
-function createWavePattern(
-  scale: number,
-  spacing: number,
-  color: string
-): HTMLCanvasElement {
-  const patternCanvas = document.createElement('canvas')
-  const ctx = patternCanvas.getContext('2d')!
-  const size = 30 * spacing
-  patternCanvas.width = size
-  patternCanvas.height = size
-
-  ctx.strokeStyle = color
-  ctx.lineWidth = 1.5 * scale
-  ctx.lineCap = 'square'
-  ctx.lineJoin = 'miter'
-
-  const amplitude = size / 3
-  ctx.beginPath()
-  for (let x = 0; x <= size; x += 1) {
-    const y = size / 2 + amplitude * Math.sin((2 * Math.PI * x) / size)
-    if (x === 0) ctx.moveTo(x, y)
-    else ctx.lineTo(x, y)
-  }
-  ctx.stroke()
-  return patternCanvas
-}
-
 function createCheckerboardPattern(
   scale: number,
   spacing: number,
@@ -229,7 +202,10 @@ export function generatePattern(
 ): HTMLCanvasElement {
   let patternCanvas: HTMLCanvasElement
 
-  if (type === 'dots') {
+  if (type === 'none') {
+    patternCanvas = document.createElement('canvas')
+    return patternCanvas
+  } else if (type === 'dots') {
     patternCanvas = createDotPattern(scale, spacing, color)
   } else if (type === 'grid') {
     patternCanvas = createGridPattern(scale, spacing, color)
@@ -243,8 +219,6 @@ export function generatePattern(
     patternCanvas = createSwigglePattern(scale, spacing, color)
   } else if (type === 'cross') {
     patternCanvas = createCrossPattern(scale, spacing, color)
-  } else if (type === 'wave') {
-    patternCanvas = createWavePattern(scale, spacing, color)
   } else if (type === 'checkerboard') {
     patternCanvas = createCheckerboardPattern(scale, spacing, color)
   } else {
@@ -299,6 +273,7 @@ export function generatePattern(
 }
 
 export const patternTypes = [
+  { value: 'none', label: 'None' },
   { value: 'dots', label: 'Dots' },
   { value: 'grid', label: 'Grid' },
   { value: 'diagonal', label: 'Diagonal' },
@@ -306,6 +281,5 @@ export const patternTypes = [
   { value: 'zigzag', label: 'Zigzag' },
   { value: 'swiggle', label: 'Swiggle' },
   { value: 'cross', label: 'Cross' },
-  { value: 'wave', label: 'Wave' },
   { value: 'checkerboard', label: 'Checkerboard' },
 ] as const 

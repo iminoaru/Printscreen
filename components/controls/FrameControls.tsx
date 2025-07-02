@@ -18,7 +18,7 @@ const frameOptions = [
   { value: 'ruler', label: 'Ruler' },
   { value: 'eclipse', label: 'Neo' },
   { value: 'dotted', label: 'Dotted' },
-  { value: 'photo', label: 'Photo' },
+  { value: 'focus', label: 'Focus' },
 ] as const
 
 type FrameType = (typeof frameOptions)[number]['value']
@@ -105,9 +105,12 @@ const framePreviews: Record<FrameType, React.ReactNode> = {
     </div>
   ),
   dotted: <div className="size-full rounded-md border-2 border-dashed border-primary/80" />,
-  photo: (
-    <div className="size-full rounded-sm bg-white p-1 shadow-md">
-      <div className="size-full bg-secondary" />
+  focus: (
+    <div className="relative size-full">
+      <div className="absolute -top-0.5 -left-0.5 h-3 w-3 rounded-tl-md border-t-2 border-l-2 border-primary/80" />
+      <div className="absolute -top-0.5 -right-0.5 h-3 w-3 rounded-tr-md border-t-2 border-r-2 border-primary/80" />
+      <div className="absolute -bottom-0.5 -left-0.5 h-3 w-3 rounded-bl-md border-b-2 border-l-2 border-primary/80" />
+      <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-br-md border-b-2 border-r-2 border-primary/80" />
     </div>
   ),
 }
@@ -116,7 +119,7 @@ export function FrameControls() {
   const { frame, setFrame } = useEditorStore()
 
   const handleSelect = (value: FrameType) => {
-    if (value.includes('-')) {
+    if (value.startsWith('window-') || value.startsWith('stack-')) {
       const [type, theme] = value.split('-')
       setFrame({ type: type as 'window' | 'stack', theme: theme as 'light' | 'dark', enabled: true })
     } else {
@@ -125,7 +128,7 @@ export function FrameControls() {
   }
 
   const isSelected = (value: FrameType) => {
-    if (value.includes('-')) {
+    if (value.startsWith('window-') || value.startsWith('stack-')) {
       const [type, theme] = value.split('-')
       return frame.type === type && frame.theme === theme
     }
@@ -153,42 +156,42 @@ export function FrameControls() {
           </div>
         </div>
 
-        {['solid', 'dotted'].includes(frame.type) && (
-          <>
-            <div>
-              <label className="text-xs text-muted-foreground mb-2 block">Color</label>
-              <div className="flex items-center gap-2">
-                <div
-                  className="relative size-9 shrink-0 overflow-hidden rounded-lg"
-                  style={{ backgroundColor: frame.color }}
-                >
-                  <input
-                    type="color"
-                    value={frame.color}
-                    onChange={(e) => setFrame({ color: e.target.value, enabled: true })}
-                    className="absolute inset-0 size-full cursor-pointer opacity-0"
-                  />
-                </div>
-                <Input
-                  type="text"
+        {['solid', 'dotted', 'infinite-mirror', 'eclipse', 'focus', 'ruler'].includes(frame.type) && (
+          <div>
+            <label className="text-xs text-muted-foreground mb-2 block">Color</label>
+            <div className="flex items-center gap-2">
+              <div
+                className="relative size-9 shrink-0 overflow-hidden rounded-lg"
+                style={{ backgroundColor: frame.color }}
+              >
+                <input
+                  type="color"
                   value={frame.color}
                   onChange={(e) => setFrame({ color: e.target.value, enabled: true })}
+                  className="absolute inset-0 size-full cursor-pointer opacity-0"
                 />
               </div>
-            </div>
-            <div>
-              <label className="text-xs text-muted-foreground mb-2 block">
-                Width
-              </label>
-              <Slider
-                value={[frame.width]}
-                onValueChange={([value]) => setFrame({ width: value })}
-                min={1}
-                max={20}
-                step={1}
+              <Input
+                type="text"
+                value={frame.color}
+                onChange={(e) => setFrame({ color: e.target.value, enabled: true })}
               />
             </div>
-          </>
+          </div>
+        )}
+        {['solid', 'dotted', 'eclipse', 'ruler', 'focus'].includes(frame.type) && (
+          <div>
+            <label className="text-xs text-muted-foreground mb-2 block">
+              Width
+            </label>
+            <Slider
+              value={[frame.width]}
+              onValueChange={([value]) => setFrame({ width: value })}
+              min={1}
+              max={50}
+              step={0.5}
+            />
+          </div>
         )}
 
         {frame.type === 'window' && (

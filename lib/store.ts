@@ -38,7 +38,6 @@ export interface PatternStyle {
     | 'zigzag'
     | 'swiggle'
     | 'cross'
-    | 'wave'
     | 'checkerboard'
   opacity: number
   scale: number
@@ -50,7 +49,7 @@ export interface PatternStyle {
 
 export interface FrameStyle {
   enabled: boolean
-  type: 'none' | 'solid' | 'window' | 'glassy' | 'infinite-mirror' | 'ruler' | 'eclipse' | 'stack' | 'dotted' | 'photo'
+  type: 'none' | 'solid' | 'window' | 'glassy' | 'infinite-mirror' | 'ruler' | 'eclipse' | 'stack' | 'dotted' | 'focus'
   // Solid
   color: string
   width: number
@@ -83,8 +82,7 @@ export interface EditorState {
   frame: FrameStyle
   canvas: CanvasSettings
   noise: NoiseStyle
-  canvasRef: React.RefObject<any> | null
-
+  
   // Actions
   setScreenshot: (screenshot: Partial<ScreenshotStyle>) => void
   setShadow: (shadow: Partial<ShadowStyle>) => void
@@ -93,7 +91,6 @@ export interface EditorState {
   setFrame: (frame: Partial<FrameStyle>) => void
   setCanvas: (canvas: Partial<CanvasSettings>) => void
   setNoise: (noise: Partial<NoiseStyle>) => void
-  setCanvasRef: (ref: React.RefObject<any> | null) => void
   set: (fn: (state: EditorState) => EditorState) => void
 }
 
@@ -152,7 +149,6 @@ export const useEditorStore = create<EditorState>((set) => ({
     type: 'none',
     opacity: 0.1,
   },
-  canvasRef: null,
 
   setScreenshot: (screenshot) =>
     set((state) => ({
@@ -181,10 +177,6 @@ export const useEditorStore = create<EditorState>((set) => ({
   setNoise: (noise) =>
     set((state) => ({
       noise: { ...state.noise, ...noise },
-    })),
-  setCanvasRef: (ref) =>
-    set((state) => ({
-      canvasRef: ref,
     })),
   set: (fn) => set(fn),
 }))
