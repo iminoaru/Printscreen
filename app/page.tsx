@@ -21,6 +21,15 @@ const PatternControls = dynamic(
 export default function EditorPage() {
   return (
     <div className="min-h-screen bg-background grid lg:grid-cols-10">
+      <a 
+        href="https://sgaud.com" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="fixed bottom-4 right-4 text-xs text-foreground/60 hover:text-foreground  transition-colors duration-200 z-[100]"
+      >
+        made by Sarthak
+      </a>
+      
       {/* Controls Panel */}
       <div className="bg-[var(--panel-bg)] text-[var(--panel-fg)] border-r border-[var(--sidebar-border)] flex flex-col lg:col-span-3 h-screen max-h-screen">
         {/* Header */}
