@@ -36,6 +36,7 @@ export const metadata: Metadata = {
     description: "A simple, beautiful, and intuitive app to make your screenshots presentable and shareable.",
     images: ["https://printscreen.ink/big.png"],
     creator: "@iminoaruu",
+    site: "@iminoaruu",
   },
 };
 
