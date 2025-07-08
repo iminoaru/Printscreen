@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     siteName: "Printscreen",
     images: [
       {
-        url: "https://printscreen.ink/og-image.png",
+        url: "https://printscreen.ink/big.png",
         width: 1200,
         height: 630,
         alt: "Printscreen App Interface",
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Printscreen | Make your screenshots beautiful",
     description: "A simple, beautiful, and intuitive app to make your screenshots presentable and shareable.",
-    images: ["https://printscreen.ink/og-image.png"],
+    images: ["https://printscreen.ink/big.png"],
     creator: "@iminoaruu",
   },
 };
